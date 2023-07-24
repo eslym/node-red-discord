@@ -22,15 +22,12 @@
         },
         paletteLabel: 'Client',
         oneditprepare: function () {
-            console.log('oneditprepare', this);
             render(this);
         },
         oneditsave: function () {
-            console.log('oneditsave', this);
             update(this);
         },
         oneditcancel: function () {
-            console.log('oneditcancel', this);
             revert(this);
         },
         onadd: function () {
@@ -40,11 +37,9 @@
 </script>
 
 <script>
-    import { Input, ToggleGroup } from 'svelte-integration-red/components';
+    import { Input, ToggleGroup, Collapsible } from 'svelte-integration-red/components';
 
     export let node;
-
-    $: console.log('node updated', node);
 
     const intents = [
         'Guilds',
@@ -79,13 +74,31 @@
     ];
 </script>
 
-<Input bind:node type="text" prop="name" label="Name" />
-<Input bind:node type="password" prop="token" label="Token" credentials />
-<ToggleGroup bind:node prop="intents" options={intents} multiselect={true} label="Intents" />
-<ToggleGroup bind:node prop="partials" options={partials} multiselect={true} label="Partials" />
-
-<style>
-    :global(.sir-Toggle-Group .content) {
-        flex-wrap: wrap;
-    }
-</style>
+<div>
+    <Input bind:node type="text" prop="name" label="Name" />
+    <Input bind:node type="password" prop="token" label="Token" credentials />
+    <Collapsible collapsed label="Intents">
+        <ToggleGroup
+            bind:node
+            prop="intents"
+            options={intents}
+            multiselect={true}
+            showHeader={false}
+            type="checkbox"
+            flexDirection="column"
+            inline={false}
+        />
+    </Collapsible>
+    <Collapsible collapsed label="Partials">
+        <ToggleGroup
+            bind:node
+            prop="partials"
+            options={partials}
+            multiselect={true}
+            showHeader={false}
+            type="checkbox"
+            flexDirection="column"
+            inline={false}
+        />
+    </Collapsible>
+</div>

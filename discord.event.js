@@ -1,3 +1,6 @@
+const dcjs = require('discord.js');
+const Flatted = require('flatted');
+
 /**
  * @param {import('node-red').NodeAPI} RED
  */
@@ -30,19 +33,28 @@ module.exports = function (RED) {
             }
             let msg = {
                 _msgid: RED.util.generateId(),
+                $dc: () => ({
+                    $lib: dcjs,
+                    client: this.clientNode.getDiscordClient()
+                }),
                 topic: config.event,
                 payload: Flatted.parse(Flatted.stringify(args))
             };
             this.send(msg);
         };
+
         node.on('failed', failedHandler);
         node.onDiscord('ready', readyHandler);
-        node.onDiscord(this.event, eventHandler);
+        if (this.event !== undefined) {
+            node.onDiscord(this.event, eventHandler);
+        }
 
         this.on('close', (_, done) => {
             node.off('failed', failedHandler);
             node.offDiscord('ready', readyHandler);
-            node.offDiscord(this.event, eventHandler);
+            if (this.event !== undefined) {
+                node.offDiscord(this.event, eventHandler);
+            }
             done();
         });
     }

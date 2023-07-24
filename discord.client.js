@@ -6,7 +6,6 @@ const { Client } = require('discord.js');
 module.exports = function (RED) {
     function DiscordClientNode(config) {
         RED.nodes.createNode(this, config);
-        console.log('node created', this.credentials);
         this.name = config.name;
         this.token = this.credentials.token;
         let client = new Client({
