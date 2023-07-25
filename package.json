@@ -1,6 +1,6 @@
 {
     "name": "@eslym/node-red-discord",
-    "version": "1.0.0",
+    "version": "0.0.1-alpha.0",
     "description": "discord.js for node-red",
     "type": "commonjs",
     "license": "MIT",
@@ -32,7 +32,9 @@
     "node-red": {
         "nodes": {
             "discord.client": "discord.client.js",
-            "discord.event": "discord.event.js"
+            "discord.account": "discord.account.js",
+            "discord.event": "discord.event.js",
+            "discord.send": "discord.send.js"
         }
     }
 }
