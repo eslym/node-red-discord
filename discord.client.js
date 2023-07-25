@@ -84,4 +84,152 @@ module.exports = function (RED) {
             token: { type: 'text' }
         }
     });
+
+    function getClient(req, res, next) {
+        let node = RED.nodes.getNode(req.params.node);
+        if (!node || node.type !== 'discord.client') {
+            res.status(404).json('Client not found');
+            return;
+        }
+        req.discordClient = node.getDiscordClient();
+        if (!req.discordClient.isReady()) {
+            res.status(503).json('Client not ready');
+            return;
+        }
+        next();
+    }
+
+    RED.httpAdmin.get(
+        '/discord/:node/guilds',
+        RED.auth.needsPermission('discord.guilds.read'),
+        getClient,
+        (req, res) => {
+            res.json(
+                req.discordClient.guilds.cache.map((guild) => {
+                    return {
+                        id: guild.id,
+                        name: guild.name
+                    };
+                })
+            );
+        }
+    );
+
+    RED.httpAdmin.get(
+        '/discord/:node/guilds/:guild',
+        RED.auth.needsPermission('discord.guilds.read'),
+        getClient,
+        (req, res) => {
+            let guild = req.discordClient.guilds.cache.get(req.params.guild);
+            if (!guild) {
+                res.status(404).end();
+                return;
+            }
+            res.json({
+                id: guild.id,
+                name: guild.name
+            });
+        }
+    );
+
+    RED.httpAdmin.get(
+        '/discord/:node/:guild/channels',
+        RED.auth.needsPermission('discord.channels.read'),
+        getClient,
+        (req, res) => {
+            /** @type {import('discord.js').Client} */
+            let client = req.discordClient;
+            let guild = client.guilds.cache.get(req.params.guild);
+            if (!guild) {
+                res.status(404).end();
+                return;
+            }
+            let channels = guild.channels;
+            if (req.query.guild) {
+                channels = channels.cache.filter((channel) => {
+                    return channel.guild.id === req.query.guild;
+                });
+            }
+            if (req.query.text) {
+                channels = channels.cache.filter((channel) => {
+                    return channel.isTextBased();
+                });
+            }
+            res.json(
+                guild.channels.cache.map((channel) => {
+                    return {
+                        id: channel.id,
+                        name: channel.name,
+                        type: channel.type
+                    };
+                })
+            );
+        }
+    );
+
+    RED.httpAdmin.get(
+        '/discord/:node/:guild/channels/:channel',
+        RED.auth.needsPermission('discord.channels.read'),
+        getClient,
+        (req, res) => {
+            let guild = req.discordClient.guilds.cache.get(req.params.guild);
+            if (!guild) {
+                res.status(404).end();
+                return;
+            }
+            let channel = guild.channels.cache.get(req.params.channel);
+            if (!channel) {
+                res.status(404).end();
+                return;
+            }
+            res.json({
+                id: channel.id,
+                name: channel.name,
+                type: channel.type
+            });
+        }
+    );
+
+    RED.httpAdmin.get(
+        '/discord/:node/:guild/roles',
+        RED.auth.needsPermission('discord.roles.read'),
+        getClient,
+        (req, res) => {
+            let guild = req.discordClient.guilds.cache.get(req.params.guild);
+            if (!guild) {
+                res.status(404).end();
+                return;
+            }
+            res.json(
+                guild.roles.cache.map((role) => {
+                    return {
+                        id: role.id,
+                        name: role.name
+                    };
+                })
+            );
+        }
+    );
+
+    RED.httpAdmin.get(
+        '/discord/:node/:guild/roles/:role',
+        RED.auth.needsPermission('discord.roles.read'),
+        getClient,
+        (req, res) => {
+            let guild = req.discordClient.guilds.cache.get(req.params.guild);
+            if (!guild) {
+                res.status(404).end();
+                return;
+            }
+            let role = guild.roles.cache.get(req.params.role);
+            if (!role) {
+                res.status(404).end();
+                return;
+            }
+            res.json({
+                id: role.id,
+                name: role.name
+            });
+        }
+    );
 };
