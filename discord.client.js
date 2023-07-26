@@ -232,4 +232,26 @@ module.exports = function (RED) {
             });
         }
     );
+
+    RED.httpAdmin.get(
+        '/discord/:node/emojis',
+        RED.auth.needsPermission('discord.emojis.read'),
+        getClient,
+        (req, res) => {
+            /** @type {import('discord.js').Client} */
+            let client = req.discordClient;
+            let emojis = [...client.emojis.cache.entries()].map(([_, emoji]) => emoji);
+            if (req.query.q) {
+                emojis = emojis.filter(
+                    (emoji) => emoji.name.includes(req.query.q) || emoji.id.includes(req.query.q)
+                );
+            }
+            emojis = emojis.map((emoji) => ({
+                id: emoji.id,
+                name: emoji.name,
+                url: emoji.url
+            }));
+            res.json(emojis.slice(0, 20));
+        }
+    );
 };
