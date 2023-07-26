@@ -6,12 +6,12 @@
         'env',
         'str',
         'json',
-        'jsonata'
-        // {
-        //     value: 'builder',
-        //     label: 'Message Builder',
-        //     hasValue: false
-        // }
+        'jsonata',
+        {
+            value: 'builder',
+            label: 'Message Builder',
+            hasValue: false
+        }
     ];
 
     RED.nodes.registerType('discord.send', {
@@ -51,8 +51,10 @@
             },
             message: {
                 value: 'payload.content',
-                type: 'str',
                 required: true
+            },
+            msg: {
+                required: false
             }
         },
         label: function () {
@@ -75,6 +77,7 @@
 
 <script>
     import { Input, TypedInput } from 'svelte-integration-red/components';
+    import MessageBuilder from './components/MessageBuilder.svelte';
 
     export let node;
 </script>
@@ -89,4 +92,23 @@
     typeProp="channelSrc"
     types={['msg', 'flow', 'global', 'env', 'str']}
 />
-<TypedInput bind:node prop="message" label="Message" typeProp="messageSrc" types={messageTypes} />
+<TypedInput
+    bind:node
+    prop="message"
+    label="Message"
+    typeProp="messageSrc"
+    types={messageTypes}
+    on:change={(e) => {
+        if (e.detail.type === 'builder') {
+            node.msg = {
+                content: e.detail.value,
+                embeds: [],
+                components: []
+            };
+        }
+    }}
+/>
+
+{#if node.messageSrc === 'builder'}
+    <MessageBuilder bind:msg={node.msg} />
+{/if}
