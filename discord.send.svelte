@@ -1,18 +1,7 @@
 <script context="module">
-    const messageTypes = [
-        'msg',
-        'flow',
-        'global',
-        'env',
-        'str',
-        'json',
-        'jsonata',
-        {
-            value: 'builder',
-            label: 'Message Builder',
-            hasValue: false
-        }
-    ];
+    import { noneType, builderType } from './components/shared.js';
+
+    const messageTypes = ['msg', 'flow', 'global', 'env', 'str', 'json', 'jsonata', builderType];
 
     RED.nodes.registerType('discord.send', {
         category: 'discord',
@@ -40,8 +29,17 @@
             },
             channel: {
                 value: 'payload.channelId',
-                type: 'str',
                 required: true
+            },
+            replySrc: {
+                value: 'none',
+                required: true,
+                types: [noneType, 'msg', 'flow', 'global', 'env', 'str'],
+                validate: RED.validators.typedInput('replySrc')
+            },
+            reply: {
+                value: 'payload.id',
+                required: false
             },
             messageSrc: {
                 value: 'msg',
@@ -54,6 +52,7 @@
                 required: true
             },
             msg: {
+                value: {},
                 required: false
             }
         },
@@ -91,6 +90,13 @@
     label="Channel ID"
     typeProp="channelSrc"
     types={['msg', 'flow', 'global', 'env', 'str']}
+/>
+<TypedInput
+    bind:node
+    prop="reply"
+    label="Reply To"
+    typeProp="replySrc"
+    types={[noneType, 'msg', 'flow', 'global', 'env', 'str']}
 />
 <TypedInput
     bind:node

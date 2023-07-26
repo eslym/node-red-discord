@@ -1,21 +1,12 @@
 <script context="module">
-    RED.nodes.registerType('discord.account', {
-        category: 'discord',
+    RED.nodes.registerType('discord.builder.embed', {
+        category: 'discord builder',
         color: '#f2f3f5',
         icon: 'discord.png',
         defaults: {
             name: {
                 value: '',
-                required: false
-            },
-            useMsg: {
-                value: false,
-                type: 'bool'
-            },
-            client: {
-                value: '',
-                type: 'discord.client',
-                required: false
+                requried: false
             },
             destType: {
                 value: 'msg',
@@ -26,12 +17,16 @@
             destination: {
                 value: 'payload',
                 required: true
+            },
+            embed: {
+                value: {},
+                required: true
             }
         },
         label: function () {
-            return this.name || 'Current Account';
+            return this.name || 'Embed Builder';
         },
-        paletteLabel: 'Current Account',
+        paletteLabel: 'Embed Builder',
         inputs: 1,
         outputs: 1,
         oneditprepare: function () {
@@ -47,14 +42,11 @@
 </script>
 
 <script>
-    import { Input, TypedInput } from 'svelte-integration-red/components';
+    import { TypedInput } from 'svelte-integration-red/components';
+    import EmbedBuilder from './components/EmbedBuilder.svelte';
 
     export let node;
 </script>
-
-<Input bind:node prop="name" label="Name" type="text" />
-<Input bind:node prop="client" type="config" label="Client" bind:disabled={node.useMsg} />
-<Input bind:node prop="useMsg" label="Same client as input Message" />
 
 <TypedInput
     bind:node
@@ -63,3 +55,5 @@
     typeProp="destType"
     types={['msg', 'flow', 'global']}
 />
+
+<EmbedBuilder bind:node bind:embed={node.embed} />

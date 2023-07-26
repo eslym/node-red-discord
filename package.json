@@ -18,7 +18,6 @@
         "prettier": "^2.8.8",
         "prettier-plugin-svelte": "^2.10.1",
         "pretty-quick": "^3.1.3",
-        "svelte-awesome-color-picker": "^2.4.6",
         "svelte-integration-red": "^1.14.3"
     },
     "dependencies": {
@@ -35,7 +34,9 @@
             "discord.client": "discord.client.js",
             "discord.account": "discord.account.js",
             "discord.event": "discord.event.js",
-            "discord.send": "discord.send.js"
+            "discord.send": "discord.send.js",
+            "discord.builder.message": "discord.builder.message.js",
+            "discord.builder.embed": "discord.builder.embed.js"
         }
     }
 }
