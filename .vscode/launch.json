@@ -7,12 +7,21 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Build & Run",
             "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/node_modules/node-red/red.js",
             "cwd": "${workspaceFolder}",
             "args": ["--userDir", "${workspaceFolder}/.debug"],
             "preLaunchTask": "npm: build"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run",
+            "skipFiles": ["<node_internals>/**"],
+            "program": "${workspaceFolder}/node_modules/node-red/red.js",
+            "cwd": "${workspaceFolder}",
+            "args": ["--userDir", "${workspaceFolder}/.debug"]
         }
     ]
 }

@@ -1,5 +1,6 @@
 const Flatted = require('flatted');
 const { promisify } = require('util');
+const { evaluateMessage } = require('./lib/builder.js');
 
 /**
  * @param {import('node-red').NodeAPI} RED
@@ -18,19 +19,26 @@ module.exports = function (RED) {
         }
 
         this.on('input', async (msg, send, done) => {
-            let channel = await prop(config.channel, config.channelSrc, this, msg);
-            let message = await prop(config.message, config.messageSrc, this, msg);
-
-            let reply = undefined;
-
-            if (config.replySrc !== 'none') {
-                reply = await prop(config.reply, config.replySrc, this, msg);
-            }
-
-            /** @type {import('discord.js').Client} */
-            let client = config.useMsg ? msg.$dc().client : this.clientNode.client;
-
             try {
+                let channel = await prop(config.channel, config.channelSrc, this, msg);
+                
+                let reply = undefined;
+
+                if (config.replySrc !== 'none') {
+                    reply = await prop(config.reply, config.replySrc, this, msg);
+                }
+
+                let message;
+
+                if (config.messageSrc === 'builder') {
+                    message = await evaluateMessage(RED, this, msg, config.msg);
+                } else {
+                    message = await prop(config.message, config.messageSrc, this, msg);
+                }
+
+                /** @type {import('discord.js').Client} */
+                let client = config.useMsg ? msg.$dc().client : this.clientNode.client;
+
                 let ch = await client.channels.fetch(channel);
 
                 if (!ch.isTextBased()) {

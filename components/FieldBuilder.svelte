@@ -12,4 +12,9 @@
 
 <Input bind:value={field.name} placeholder="Name" label="Name" />
 <Input bind:value={field.value} placeholder="Value" label="Value" />
-<TypedInput bind:value={field.inline} type="bool" types={['bool']} label="Inline" />
+<TypedInput
+    bind:value={field.inline}
+    type="bool"
+    types={['bool', 'msg', 'flow', 'global', 'env']}
+    label="Inline"
+/>
