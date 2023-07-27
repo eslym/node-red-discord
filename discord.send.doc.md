@@ -4,6 +4,7 @@ Send discord message
 
 : Client : The client to get the user info from.
 : Channel : The channel to send the message to.
+: Reply To : The message to reply to.
 : Message : The message to send.
 
 ### Outputs

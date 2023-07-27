@@ -21,6 +21,12 @@ module.exports = function (RED) {
             let channel = await prop(config.channel, config.channelSrc, this, msg);
             let message = await prop(config.message, config.messageSrc, this, msg);
 
+            let reply = undefined;
+
+            if (config.replySrc !== 'none') {
+                reply = await prop(config.reply, config.replySrc, this, msg);
+            }
+
             /** @type {import('discord.js').Client} */
             let client = config.useMsg ? msg.$dc().client : this.clientNode.client;
 
@@ -31,7 +37,27 @@ module.exports = function (RED) {
                     throw new Error('channel is not a text based channel');
                 }
 
-                let result = await ch.send(message);
+                /** @type {import('discord.js').MessageCreateOptions} */
+                let opts = {};
+
+                if (typeof message === 'string') {
+                    opts.content = message;
+                } else if (typeof message === 'object') {
+                    opts = {
+                        content: message.content,
+                        tts: message.tts,
+                        nonce: message.nonce,
+                        embeds: message.embeds,
+                        components: message.components,
+                        files: message.files
+                    };
+                }
+
+                if (reply !== undefined) {
+                    opts.reply.messageReference = reply;
+                }
+
+                let result = await ch.send(opts);
 
                 msg.payload = Flatted.parse(Flatted.stringify(result));
 
