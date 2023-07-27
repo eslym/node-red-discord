@@ -99,6 +99,28 @@ module.exports = function (RED) {
         next();
     }
 
+    RED.httpAdmin.get('/discord/nodes', RED.auth.needsPermission('discord.read'), (req, res) => {
+        let nodes = [];
+        RED.nodes.eachNode((node) => {
+            if (node.type === 'discord.client') {
+                nodes.push({
+                    id: node.id,
+                    name: node.name
+                });
+            }
+        });
+        res.json(nodes);
+    });
+
+    RED.httpAdmin.get(
+        '/discord/:node/available',
+        RED.auth.needsPermission('discord.read'),
+        getClient,
+        (req, res) => {
+            res.json('ok');
+        }
+    );
+
     RED.httpAdmin.get(
         '/discord/:node/guilds',
         RED.auth.needsPermission('discord.guilds.read'),
@@ -246,12 +268,34 @@ module.exports = function (RED) {
                     (emoji) => emoji.name.includes(req.query.q) || emoji.id.includes(req.query.q)
                 );
             }
-            emojis = emojis.map((emoji) => ({
+            res.json(
+                emojis.map((emoji) => ({
+                    id: emoji.id,
+                    name: emoji.name,
+                    url: emoji.url,
+                    animated: emoji.animated
+                }))
+            );
+        }
+    );
+
+    RED.httpAdmin.get(
+        '/discord/:node/emojis/:emoji',
+        RED.auth.needsPermission('discord.emojis.read'),
+        getClient,
+        (req, res) => {
+            /** @type {import('discord.js').Emoji} */
+            let emoji = req.discordClient.emojis.cache.get(req.params.emoji);
+            if (!emoji) {
+                res.status(404).json('Emoji not found');
+                return;
+            }
+            res.json({
                 id: emoji.id,
                 name: emoji.name,
-                url: emoji.url
-            }));
-            res.json(emojis.slice(0, 20));
+                url: emoji.url,
+                animated: emoji.animated
+            });
         }
     );
 };

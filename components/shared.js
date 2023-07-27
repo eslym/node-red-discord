@@ -17,3 +17,5 @@ export const builderType = {
     hasValue: false,
     icon: 'fa-wrench'
 };
+
+export const clientNodeContextKey = Symbol('clientNode');

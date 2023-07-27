@@ -1,6 +1,7 @@
 const Flatted = require('flatted');
 const { promisify } = require('util');
 const { evaluateMessage } = require('./lib/builder.js');
+const Mustache = require('mustache');
 
 /**
  * @param {import('node-red').NodeAPI} RED
@@ -13,6 +14,14 @@ module.exports = function (RED) {
         this.event = config.event;
 
         if (!config.useMsg) {
+            if (!config.client) {
+                this.status({
+                    fill: 'red',
+                    shape: 'dot',
+                    text: 'no client'
+                });
+                return;
+            }
             /** @type {DiscordClientNode} node */
             let node = RED.nodes.getNode(config.client);
             this.clientNode = node;
@@ -21,7 +30,7 @@ module.exports = function (RED) {
         this.on('input', async (msg, send, done) => {
             try {
                 let channel = await prop(config.channel, config.channelSrc, this, msg);
-                
+
                 let reply = undefined;
 
                 if (config.replySrc !== 'none') {
@@ -34,6 +43,9 @@ module.exports = function (RED) {
                     message = await evaluateMessage(RED, this, msg, config.msg);
                 } else {
                     message = await prop(config.message, config.messageSrc, this, msg);
+                    if (config.messageSrc === 'str') {
+                        message = Mustache.render(message, msg);
+                    }
                 }
 
                 /** @type {import('discord.js').Client} */
@@ -62,7 +74,9 @@ module.exports = function (RED) {
                 }
 
                 if (reply !== undefined) {
-                    opts.reply.messageReference = reply;
+                    opts.reply = {
+                        messageReference: reply
+                    };
                 }
 
                 let result = await ch.send(opts);

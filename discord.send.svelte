@@ -1,5 +1,5 @@
 <script context="module">
-    import { noneType, builderType } from './components/shared.js';
+    import { noneType, builderType, clientNodeContextKey } from './components/shared.js';
 
     const messageTypes = ['msg', 'flow', 'global', 'env', 'str', 'json', 'jsonata', builderType];
 
@@ -77,8 +77,16 @@
 <script>
     import { Input, TypedInput } from 'svelte-integration-red/components';
     import MessageBuilder from './components/MessageBuilder.svelte';
+    import { setContext } from 'svelte';
+    import { writable } from 'svelte/store';
 
     export let node;
+
+    let clientNode = writable(undefined);
+
+    setContext(clientNodeContextKey, clientNode);
+
+    $: $clientNode = node.client;
 </script>
 
 <Input bind:node prop="name" label="Name" type="text" />

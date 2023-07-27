@@ -9,11 +9,18 @@ module.exports = function (RED) {
         RED.nodes.createNode(this, config);
 
         if (!config.useMsg) {
+            if (!config.client) {
+                this.status({
+                    fill: 'red',
+                    shape: 'dot',
+                    text: 'no client'
+                });
+                return;
+            }
             /** @type {DiscordClientNode} node */
             let node = RED.nodes.getNode(config.client);
             this.clientNode = node;
         }
-
         this.on('input', async (msg, send, done) => {
             try {
                 /** @type {import('discord.js').Client} */
