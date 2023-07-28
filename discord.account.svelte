@@ -1,49 +1,51 @@
 <script context="module">
-    RED.nodes.registerType('discord.account', {
-        category: 'discord',
-        color: '#f2f3f5',
-        icon: 'discord.png',
-        defaults: {
-            name: {
-                value: '',
-                required: false
+    export function register(render, update, revert) {
+        RED.nodes.registerType('discord.account', {
+            category: 'discord',
+            color: '#f2f3f5',
+            icon: 'discord.png',
+            defaults: {
+                name: {
+                    value: '',
+                    required: false
+                },
+                useMsg: {
+                    value: false,
+                    type: 'bool'
+                },
+                client: {
+                    value: '',
+                    type: 'discord.client',
+                    required: false
+                },
+                destType: {
+                    value: 'msg',
+                    required: true,
+                    types: ['msg', 'flow', 'global'],
+                    validate: RED.validators.typedInput('destType')
+                },
+                destination: {
+                    value: 'payload',
+                    required: true
+                }
             },
-            useMsg: {
-                value: false,
-                type: 'bool'
+            label: function () {
+                return this.name || 'Current Account';
             },
-            client: {
-                value: '',
-                type: 'discord.client',
-                required: false
+            paletteLabel: 'Current Account',
+            inputs: 1,
+            outputs: 1,
+            oneditprepare: function () {
+                render(this);
             },
-            destType: {
-                value: 'msg',
-                required: true,
-                types: ['msg', 'flow', 'global'],
-                validate: RED.validators.typedInput('destType')
+            oneditsave: function () {
+                update(this);
             },
-            destination: {
-                value: 'payload',
-                required: true
+            oneditcancel: function () {
+                revert(this);
             }
-        },
-        label: function () {
-            return this.name || 'Current Account';
-        },
-        paletteLabel: 'Current Account',
-        inputs: 1,
-        outputs: 1,
-        oneditprepare: function () {
-            render(this);
-        },
-        oneditsave: function () {
-            update(this);
-        },
-        oneditcancel: function () {
-            revert(this);
-        }
-    });
+        });
+    }
 </script>
 
 <script>

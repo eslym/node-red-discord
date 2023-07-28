@@ -1,39 +1,41 @@
 <script context="module">
-    RED.nodes.registerType('discord.event', {
-        category: 'discord',
-        color: '#f2f3f5',
-        defaults: {
-            name: {
-                value: '',
-                required: false
+    export function register(render, update, revert) {
+        RED.nodes.registerType('discord.event', {
+            category: 'discord',
+            color: '#f2f3f5',
+            defaults: {
+                name: {
+                    value: '',
+                    required: false
+                },
+                client: {
+                    value: '',
+                    required: true,
+                    type: 'discord.client'
+                },
+                event: {
+                    value: undefined,
+                    required: true
+                }
             },
-            client: {
-                value: '',
-                required: true,
-                type: 'discord.client'
+            inputs: 0,
+            outputs: 1,
+            icon: 'discord.png',
+            label: function () {
+                return this.name || this.event ? 'Listen ' + this.event : 'Listen';
             },
-            event: {
-                value: undefined,
-                required: true
+            paletteLabel: 'Listen',
+            oneditprepare: function () {
+                render(this);
+            },
+            oneditsave: function () {
+                update(this);
+            },
+            oneditcancel: function () {
+                revert(this);
             }
-        },
-        inputs: 0,
-        outputs: 1,
-        icon: 'discord.png',
-        label: function () {
-            return this.name || this.event ? 'Listen ' + this.event : 'Listen';
-        },
-        paletteLabel: 'Listen',
-        oneditprepare: function () {
-            render(this);
-        },
-        oneditsave: function () {
-            update(this);
-        },
-        oneditcancel: function () {
-            revert(this);
-        }
-    });
+        });
+    }
 
     const events = {
         'Auto Moderation': {

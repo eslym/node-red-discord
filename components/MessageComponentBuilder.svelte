@@ -2,6 +2,7 @@
     import { Input, Select } from 'svelte-integration-red/components';
     import TypedInput from './TypedInput.svelte';
     import EmojiInput from './EmojiInput.svelte';
+    import { undefinedType } from './shared';
 
     export let component;
 
@@ -31,6 +32,22 @@
     </Select>
     <Input label="Label" placeholder="Label" bind:value={component.label} />
     <EmojiInput label="Emoji" bind:emoji={component.emoji} />
+{:else}
+    <Input label="Placeholder" placeholder="Placeholder" bind:value={component.placeholder} />
+    <TypedInput
+        label="Min Length"
+        placeholder="Minimum Choice"
+        bind:data={component.minLength}
+        default={{ value: undefined, type: 'undefined' }}
+        types={[undefinedType, 'num', 'msg', 'flow', 'global', 'env']}
+    />
+    <TypedInput
+        label="Max Length"
+        placeholder="Maximum Choice"
+        bind:data={component.maxLength}
+        default={{ value: undefined, type: 'undefined' }}
+        types={[undefinedType, 'num', 'msg', 'flow', 'global', 'env']}
+    />
 {/if}
 <TypedInput
     label="Disabled"

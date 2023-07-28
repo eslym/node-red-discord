@@ -2,12 +2,13 @@
     import { Collapsible, EditableList, Button } from 'svelte-integration-red/components';
     import MessageComponentBuilder from './MessageComponentBuilder.svelte';
 
-    export let row;
+    let _row;
     export let label = '';
+    export let collapsed = false;
 
-    if (!Array.isArray(row)) {
-        row = [];
-    }
+    export { _row as row };
+
+    let newlyAdded = _row.length;
 
     function getComponentHeader(component) {
         if (component.type === 2) {
@@ -20,7 +21,8 @@
 </script>
 
 <Collapsible
-    label="{label ? label : 'Row'} ({row?.length ?? 0} component{row?.length > 0 ? 's' : ''})"
+    bind:collapsed
+    label="{label ? label : 'Row'} ({_row?.length ?? 0} component{_row?.length > 0 ? 's' : ''})"
 >
     <div slot="header" style="display: flex; flex-direction:row;">
         <Button
@@ -28,27 +30,31 @@
             label="Add Component"
             small
             inline
-            disabled={row.length > 0 && (row.length >= 5 || row[0].type !== 2)}
-            on:click={() => (row = [...row, { type: 2 }])}
+            disabled={_row.length > 0 && (_row.length >= 5 || _row[0].type !== 2)}
+            on:click={() => {
+                newlyAdded = _row.length;
+                _row = [..._row, { type: 2 }];
+                collapsed = false;
+            }}
         />
         <slot name="header" />
     </div>
-    {#if row?.length > 0}
-        <EditableList bind:elements={row} minHeight="0" maxHeigt="auto" sortable let:index>
-            <Collapsible label={getComponentHeader(row[index])}>
+    {#if _row.length > 0}
+        <EditableList bind:elements={_row} minHeight="0" maxHeigt="auto" sortable let:index>
+            <Collapsible label={getComponentHeader(_row[index])} collapsed={index < newlyAdded}>
                 <Button
                     slot="header"
                     small
                     inline
                     icon="times"
                     on:click={() => {
-                        row.splice(index, 1);
-                        row = row;
+                        _row.splice(index, 1);
+                        _row = _row;
                     }}
                 />
                 <MessageComponentBuilder
-                    bind:component={row[index]}
-                    disableSelect={row.length > 1}
+                    bind:component={_row[index]}
+                    disableSelect={_row.length > 1}
                 />
             </Collapsible>
         </EditableList>

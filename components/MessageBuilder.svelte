@@ -95,7 +95,7 @@
             bind:elements={msg.components}
             let:index
         >
-            <ActionRowBuilder>
+            <ActionRowBuilder bind:row={msg.components[index]}>
                 <Button
                     slot="header"
                     small

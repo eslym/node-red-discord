@@ -17,10 +17,10 @@
     let popupId;
 
     async function checkAvailable(node) {
-        if (!_node) {
+        if (!_node || !node) {
             return false;
         }
-        let res = await fetch(`/discord/${node}/available`);
+        let res = await fetch(`/discord/${node}`);
         return res.ok;
     }
 
@@ -36,7 +36,6 @@
 
     function onSelect(e) {
         closePopup(popupId);
-        showPopup = false;
         dispatch('select', e.detail);
     }
 </script>

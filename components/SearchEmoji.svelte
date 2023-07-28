@@ -1,11 +1,14 @@
 <script>
-    import { Input } from 'svelte-integration-red/components';
+    import { Input, Collapsible } from 'svelte-integration-red/components';
     import { createEventDispatcher } from 'svelte';
 
     export let clientNode;
+    export let load = true;
 
     let keyword;
     let emojis = [];
+
+    let filteredEmojis = [];
 
     const dispatch = createEventDispatcher();
 
@@ -22,21 +25,60 @@
         emojis = await res.json();
     }
 
-    $: fetchEmojis(clientNode);
+    function filterEmojis(emojis, keyword) {
+        return emojis
+            .map((g) => ({
+                ...g,
+                emojis: g.emojis.filter((e) => e.name.toLowerCase().includes(keyword.toLowerCase()))
+            }))
+            .filter((g) => g.emojis.length > 0);
+    }
+
+    $: filteredEmojis = filterEmojis(emojis, keyword);
+
+    $: if (load) {
+        fetchEmojis(clientNode);
+    }
 </script>
 
 <Input label="Searh" bind:value={keyword} />
-<div class="emoji-box">
-    {#each emojis.filter((e) => e.name.toLowerCase().includes(keyword.toLowerCase())) as emoji}
-        <button on:click={() => dispatch('select', emoji)}>
-            <img src={emoji.url} alt={emoji.name} title={emoji.name} />
-        </button>
+<div class="container">
+    {#each filteredEmojis as guild (guild.id)}
+        <Collapsible label={guild.name}>
+            <svelte:fragment slot="header">
+                {#if guild.thumbnail}
+                    <img
+                        class="guild-thumbnail"
+                        src={guild.thumbnail}
+                        alt={guild.name}
+                        loading="lazy"
+                    />
+                {/if}
+            </svelte:fragment>
+            <div class="emoji-box">
+                {#each guild.emojis as emoji (emoji.id)}
+                    <button on:click={() => dispatch('select', emoji)}>
+                        <img src={emoji.url} alt={emoji.name} title={emoji.name} loading="lazy" />
+                    </button>
+                {/each}
+            </div>
+        </Collapsible>
     {:else}
         <p style="text-align: center;">No Emoji</p>
     {/each}
 </div>
 
 <style>
+    .container {
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 5px;
+    }
+    .guild-thumbnail {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+    }
     .emoji-box {
         display: flex;
         flex-wrap: wrap;

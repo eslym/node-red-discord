@@ -3,75 +3,77 @@
 
     const messageTypes = ['msg', 'flow', 'global', 'env', 'str', 'json', 'jsonata', builderType];
 
-    RED.nodes.registerType('discord.send', {
-        category: 'discord',
-        color: '#f2f3f5',
-        icon: 'discord.png',
-        defaults: {
-            name: {
-                value: '',
-                required: false
+    export function register(render, update, revert) {
+        RED.nodes.registerType('discord.send', {
+            category: 'discord',
+            color: '#f2f3f5',
+            icon: 'discord.png',
+            defaults: {
+                name: {
+                    value: '',
+                    required: false
+                },
+                useMsg: {
+                    value: false,
+                    type: 'bool'
+                },
+                client: {
+                    value: '',
+                    type: 'discord.client',
+                    required: false
+                },
+                channelSrc: {
+                    value: 'msg',
+                    required: true,
+                    types: ['msg', 'flow', 'global', 'env', 'str'],
+                    validate: RED.validators.typedInput('channelSrc')
+                },
+                channel: {
+                    value: 'payload.channelId',
+                    required: true
+                },
+                replySrc: {
+                    value: 'none',
+                    required: true,
+                    types: [noneType, 'msg', 'flow', 'global', 'env', 'str'],
+                    validate: RED.validators.typedInput('replySrc')
+                },
+                reply: {
+                    value: 'payload.id',
+                    required: false
+                },
+                messageSrc: {
+                    value: 'msg',
+                    required: true,
+                    types: messageTypes,
+                    validate: RED.validators.typedInput('messageSrc')
+                },
+                message: {
+                    value: 'payload.content',
+                    required: true
+                },
+                msg: {
+                    value: {},
+                    required: false
+                }
             },
-            useMsg: {
-                value: false,
-                type: 'bool'
+            label: function () {
+                return this.name || 'Send';
             },
-            client: {
-                value: '',
-                type: 'discord.client',
-                required: false
+            paletteLabel: 'Send',
+            inputs: 1,
+            outputs: 1,
+            oneditprepare: function () {
+                render(this);
             },
-            channelSrc: {
-                value: 'msg',
-                required: true,
-                types: ['msg', 'flow', 'global', 'env', 'str'],
-                validate: RED.validators.typedInput('channelSrc')
+            oneditsave: function () {
+                update(this);
             },
-            channel: {
-                value: 'payload.channelId',
-                required: true
-            },
-            replySrc: {
-                value: 'none',
-                required: true,
-                types: [noneType, 'msg', 'flow', 'global', 'env', 'str'],
-                validate: RED.validators.typedInput('replySrc')
-            },
-            reply: {
-                value: 'payload.id',
-                required: false
-            },
-            messageSrc: {
-                value: 'msg',
-                required: true,
-                types: messageTypes,
-                validate: RED.validators.typedInput('messageSrc')
-            },
-            message: {
-                value: 'payload.content',
-                required: true
-            },
-            msg: {
-                value: {},
-                required: false
+            oneditcancel: function () {
+                revert(this);
             }
-        },
-        label: function () {
-            return this.name || 'Send';
-        },
-        paletteLabel: 'Send',
-        inputs: 1,
-        outputs: 1,
-        oneditprepare: function () {
-            render(this);
-        },
-        oneditsave: function () {
-            update(this);
-        },
-        oneditcancel: function () {
-            revert(this);
-        }
-    });
+        });
+    }
 </script>
 
 <script>
