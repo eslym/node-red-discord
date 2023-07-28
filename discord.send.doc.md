@@ -2,11 +2,11 @@ Send discord message
 
 ### Inputs
 
-: Client : The client to get the user info from.
-: Channel : The channel to send the message to.
-: Reply To : The message to reply to.
-: Message : The message to send.
+: Client (Discord Client) : The client to get the user info from.
+: Channel (string) : The channel to send the message to.
+: Reply To (string) : The message to reply to.
+: Message (Message Data) : The message to send.
 
 ### Outputs
 
-: Message : The message that was sent.
+: Message (Message Data) : The message that was sent.
