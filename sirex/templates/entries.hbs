@@ -1,7 +1,9 @@
 {{#each imports}}
 import { default as Component_{{{@index}}}, register as register_{{{@index}}} } from {{{json path}}};
 {{/each}}
-import { registerHelper } from './helper.js'; window.SIREX = window.SIREX || {};
+import { registerHelper } from './helper.js';
+
+window.SIREX = window.SIREX || {};
 
 if(!window.SIREX[{{{json packageName }}}]) {
     const entries = {
