@@ -1,0 +1,20 @@
+<script type='module' src='resources/{{packageName}}/bundle.js'></script>
+{{#if hasCss}}
+    <link rel='stylesheet' href='resources/{{packageName}}/bundle.css' />
+{{/if}}
+
+<script type='text/javascript'>
+    window.SIREX[{{{json packageName}}}].register({{{json name}}});
+</script>
+
+<script type='text/html' data-template-name='{{name}}'>
+    <div id="{{packageName}}/{{name}}"></div>
+</script>
+
+{{#if docContent}}
+
+    <script type='{{docType}}' data-help-name='{{name}}'>
+        {{{docContent}}}
+    </script>
+
+{{/if}}
