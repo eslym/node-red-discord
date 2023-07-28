@@ -10,9 +10,12 @@ import { registerHelper } from './helper.js'; window.SIREX = window.SIREX || {};
     {{{json name}}}: { component: Component_{{{@index}}}, register: register_{{{@index}}}
     },
 {{/each}}
-}; window.SIREX[{{{json packageName}}}] = { register: function(name) { registerHelper({ name:
-{{{json packageName}}}, version:
-{{{json version}}}
-}, entries, name) }, entries }; } else { console.warn(`SIREX: Package
+}; window.SIREX[{{{json packageName}}}] = { register: function(name) { registerHelper({ name:{{{json
+    packageName
+}}}, version:{{{json version}}}
+}, entries, name) }, entries }; const link = document.createElement('link'); link.rel =
+'stylesheet'; link.href = `resources/${
 {{{json packageName}}}
-already exists.`) } export default window.SIREX[{{{json packageName}}}];
+}/bundle.css`; document.head.appendChild(link); } else { console.warn(`SIREX: Package{{{json
+    packageName
+}}}already exists.`) } export default window.SIREX[{{{json packageName}}}];

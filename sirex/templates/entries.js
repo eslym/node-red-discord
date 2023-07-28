@@ -16,27 +16,29 @@ function* r(data) {
         yield JSON.stringify(data['imports'][index]['path']);
         yield ';\n';
     }
-    yield "import { registerHelper } from './helper.js';\n\nwindow.SIREX = window.SIREX || {};\n\nif(!window.SIREX[";
+    yield "import { registerHelper } from './helper.js'; window.SIREX = window.SIREX || {};\n\nif(!window.SIREX[";
     yield JSON.stringify(data['packageName']);
     yield ']) {\n    const entries = {\n';
     for (let index = 0; index < data['imports'].length; index++) {
         yield '        ';
         yield JSON.stringify(data['imports'][index]['name']);
-        yield ': {\n            component: Component_';
+        yield ': { component: Component_';
         yield index;
-        yield ',\n            register: register_';
+        yield ', register: register_';
         yield index;
-        yield '\n        },\n';
+        yield ' },\n';
     }
-    yield '    };\n\n    window.SIREX[';
+    yield '    };\n    window.SIREX[';
     yield JSON.stringify(data['packageName']);
-    yield '] = {\n        register: function(name) {\n            registerHelper({\n                name: ';
+    yield '] = {\n        register: function(name) {\n            registerHelper({\n                name:';
     yield JSON.stringify(data['packageName']);
-    yield ',\n                version: ';
+    yield ',\n                version:';
     yield JSON.stringify(data['version']);
-    yield '\n            }, entries, name)\n        },\n        entries\n    };\n} else {\n    console.warn(`SIREX: Package ';
+    yield "\n            }, entries, name)\n        },\n        entries\n    };\n\n    const link = document.createElement('link');\n    link.rel = 'stylesheet';\n    link.href = `resources/${ ";
     yield JSON.stringify(data['packageName']);
-    yield ' already exists.`)\n}\n\nexport default window.SIREX[';
+    yield ' }/bundle.css`;\n    document.head.appendChild(link);\n} else {\n    console.warn(`SIREX: Package';
+    yield JSON.stringify(data['packageName']);
+    yield 'already exists.`)\n}\n\nexport default window.SIREX[';
     yield JSON.stringify(data['packageName']);
     yield '];\n';
 }

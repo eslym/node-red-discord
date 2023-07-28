@@ -16,6 +16,8 @@ async function build() {
     }
     fs.mkdirSync('.build');
 
+    console.time('prepare for build');
+
     const packageJson = JSON.parse(fs.readFileSync('package.json'));
     const nodes = packageJson['node-red'].nodes;
     const imports = Object.entries(nodes).map(([name, file]) => ({
@@ -28,6 +30,10 @@ async function build() {
         entryTemplate({ packageName: packageJson.name, version: packageJson.version, imports })
     );
     fs.copyFileSync(path.join(__dirname, 'helper.js'), '.build/helper.js');
+
+    console.timeEnd('prepare for build');
+
+    console.time('build shared bundle');
 
     const result = await rollup.rollup({
         input: '.build/bundle.js',
@@ -52,21 +58,22 @@ async function build() {
         fs.rmSync('resources', { recursive: true, force: true });
     }
 
-    const bundle = await result.write({
+    await result.write({
         dir: 'resources',
         sourcemap: true,
         format: 'esm'
     });
 
-    const hasCss = bundle.output.some((file) => file.name === 'bundle.css');
+    console.timeEnd('build shared bundle');
 
     for (const [name, file] of Object.entries(nodes)) {
+        let outFile = file.replace(/\.js$/, '.html');
+        console.time(`build ${outFile}`);
         let opts = {
             packageName: packageJson.name,
             version: packageJson.version,
             name,
-            file,
-            hasCss
+            file
         };
         let htmlDoc = file.replace(/\.js$/, '.doc.html');
         let mdDoc = file.replace(/\.js$/, '.doc.md');
@@ -77,8 +84,8 @@ async function build() {
             opts.docContent = fs.readFileSync(mdDoc, 'utf8');
             opts.docType = 'text/markdown';
         }
-        let outFile = file.replace(/\.js$/, '.html');
         fs.writeFileSync(outFile, nodeTemplate(opts));
+        console.timeEnd(`build ${outFile}`);
     }
 }
 
