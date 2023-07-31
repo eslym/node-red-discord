@@ -1,5 +1,5 @@
 <script>
-    import { undefinedType } from './shared';
+    import { undefinedType } from '../lib/constants';
     import {
         Textarea,
         Collapsible,
@@ -11,16 +11,9 @@
     import TypedInput from './TypedInput.svelte';
     import FieldBuilder from './FieldBuilder.svelte';
     import ImageBuilder from './ImageBuilder.svelte';
+    import EditList from './EditList.svelte';
 
     export let embed;
-
-    $: if (typeof embed.author !== 'object') {
-        embed.author = {};
-    }
-
-    $: if (typeof embed.footer !== 'object') {
-        embed.footer = {};
-    }
 </script>
 
 <Input label="Title" bind:value={embed.title} placeholder="Title" />
@@ -54,28 +47,16 @@
         icon="plus"
         label="Add Field"
         on:click={() => {
-            embed.fields = [...(embed.fields ?? []), { inline: 'false' }];
+            embed.fields = [...embed.fields, { inline: 'false' }];
         }}
     />
-    {#if embed.fields && embed.fields.length > 0}
-        <EditableList bind:elements={embed.fields} minHeight="0" maxHeight="auto" let:index>
-            <Collapsible label={embed.fields[index].name || `Field ${index + 1}`} collapsed>
-                <Button
-                    slot="header"
-                    small
-                    inline
-                    icon="times"
-                    on:click={() => {
-                        embed.fields.splice(index, 1);
-                        embed.fields = embed.fields;
-                    }}
-                />
-                <FieldBuilder bind:field={embed.fields[index]} />
-            </Collapsible>
-        </EditableList>
-    {:else}
-        <p style="text-align: center;">No fields</p>
-    {/if}
+    <EditList
+        bind:elements={embed.fields}
+        elementLabel={(index) => embed.fields[index].name || `Field ${index + 1}`}
+        let:index
+    >
+        <FieldBuilder bind:field={embed.fields[index]} />
+    </EditList>
 </Collapsible>
 <Collapsible label="Image" collapsed>
     <ImageBuilder bind:image={embed.image} />

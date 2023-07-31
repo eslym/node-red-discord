@@ -2,7 +2,7 @@
     import { Input, Select } from 'svelte-integration-red/components';
     import TypedInput from './TypedInput.svelte';
     import EmojiInput from './EmojiInput.svelte';
-    import { undefinedType } from './shared';
+    import { undefinedType } from '../lib/constants';
 
     export let component;
 

@@ -3,7 +3,7 @@
     import { Popup, Select } from 'svelte-integration-red/components';
     import { closePopup } from 'svelte-integration-red/components/Popup.svelte';
     import { getContext, createEventDispatcher } from 'svelte';
-    import { clientNodeContextKey } from './shared';
+    import { clientNodeContextKey } from '../lib/constants';
     import SearchEmoji from './SearchEmoji.svelte';
 
     const dispatch = createEventDispatcher();

@@ -8,7 +8,7 @@ function standardPromiseCallback(res, rej) {
     };
 }
 
-function asyncContext(context) {
+export function asyncContext(context) {
     let get = (key, store) =>
         new Promise((res, rej) => {
             context.get(key, store, standardPromiseCallback(res, rej));
@@ -28,7 +28,7 @@ function asyncContext(context) {
  * @param {string} dest
  * @param {any} val
  */
-async function setValue(RED, node, msg, type, dest, val) {
+export async function setValue(RED, node, msg, type, dest, val) {
     switch (type) {
         case 'msg':
             let paths = RED.util.normalisePropertyExpression(dest).join('.');
@@ -44,5 +44,3 @@ async function setValue(RED, node, msg, type, dest, val) {
             throw new Error('Invalid Destination');
     }
 }
-
-module.exports = { asyncContext, setValue };

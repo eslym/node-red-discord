@@ -25,7 +25,7 @@ function* r(data) {
         yield e(data['docType']);
         yield "' data-help-name='";
         yield e(data['name']);
-        yield "'>\n    ";
+        yield "'>\n";
         yield data['docContent'];
         yield '\n</script>\n\n';
     }

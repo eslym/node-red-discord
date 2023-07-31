@@ -1,10 +1,10 @@
-const dcjs = require('discord.js');
-const Flatted = require('flatted');
+import * as dcjs from 'discord.js';
+import * as Flatted from 'flatted';
 
 /**
  * @param {import('node-red').NodeAPI} RED
  */
-module.exports = function (RED) {
+export default function (RED) {
     function DiscordEventNode(config) {
         RED.nodes.createNode(this, config);
         this.name = config.name;
@@ -62,4 +62,4 @@ module.exports = function (RED) {
         });
     }
     RED.nodes.registerType('discord.event', DiscordEventNode);
-};
+}

@@ -1,5 +1,5 @@
 <script context="module">
-    import { noneType, builderType, clientNodeContextKey } from './components/shared.js';
+    import { noneType, builderType, clientNodeContextKey } from './lib/constants.js';
 
     const messageTypes = ['msg', 'flow', 'global', 'env', 'str', 'json', 'jsonata', builderType];
 
@@ -64,7 +64,7 @@
             inputs: 1,
             outputs: 1,
             oneditprepare: function () {
-                render(this);
+                render(this, { minWidth: '500px' });
             },
             oneditsave: function () {
                 update(this);

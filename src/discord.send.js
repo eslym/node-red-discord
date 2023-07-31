@@ -1,12 +1,12 @@
-const Flatted = require('flatted');
-const { promisify } = require('util');
-const { evaluateMessage } = require('./lib/builder.js');
-const Mustache = require('mustache');
+import * as Flatted from 'flatted';
+import { promisify } from 'util';
+import { evaluateMessage } from './lib/builder.js';
+import Mustache from 'mustache';
 
 /**
  * @param {import('node-red').NodeAPI} RED
  */
-module.exports = function (RED) {
+export default function (RED) {
     const prop = promisify(RED.util.evaluateNodeProperty);
     function DiscordSendNode(config) {
         RED.nodes.createNode(this, config);
@@ -103,4 +103,4 @@ module.exports = function (RED) {
         });
     }
     RED.nodes.registerType('discord.send', DiscordSendNode);
-};
+}

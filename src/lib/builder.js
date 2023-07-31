@@ -1,6 +1,6 @@
-const { promisify } = require('util');
-const Mustache = require('mustache');
-const Color = require('color');
+import { promisify } from 'util';
+import Mustache from 'mustache';
+import Color from 'color';
 
 /**
  * @param {import('node-red').NodeAPI} RED
@@ -9,7 +9,7 @@ const Color = require('color');
  * @param {object} message
  * @returns {Promise<import('discord.js').MessageCreateOptions>}
  */
-async function evaluateMessage(RED, node, msg, message) {
+export async function evaluateMessage(RED, node, msg, message) {
     let result = {};
     if (message.content) {
         result.content = Mustache.render(message.content, msg);
@@ -29,7 +29,7 @@ async function evaluateMessage(RED, node, msg, message) {
  * @param {object} embed
  * @returns {Promise<import('discord.js').EmbedData>}
  */
-async function evaluateEmbed(RED, node, msg, embed) {
+export async function evaluateEmbed(RED, node, msg, embed) {
     const prop = promisify(RED.util.evaluateNodeProperty);
     const result = {};
     if (embed.title) {
@@ -159,5 +159,3 @@ function dateVal(val) {
             throw new Error('Invalid Date');
     }
 }
-
-module.exports = { evaluateMessage, evaluateEmbed };

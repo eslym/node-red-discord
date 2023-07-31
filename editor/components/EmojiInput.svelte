@@ -3,7 +3,7 @@
     import { writable } from 'svelte/store';
     import { Row, Button } from 'svelte-integration-red/components';
     import TypedInput from './TypedInput.svelte';
-    import { undefinedType, clientNodeContextKey } from './shared';
+    import { undefinedType, clientNodeContextKey } from '../lib/constants';
     import SearchEmojiPopup from './SearchEmojiPopup.svelte';
 
     const unicodeType = {

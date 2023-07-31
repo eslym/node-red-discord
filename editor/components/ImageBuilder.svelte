@@ -1,5 +1,5 @@
 <script>
-    import { undefinedType } from './shared';
+    import { undefinedType } from '../lib/constants';
     import { Input } from 'svelte-integration-red/components';
     import TypedInput from './TypedInput.svelte';
 

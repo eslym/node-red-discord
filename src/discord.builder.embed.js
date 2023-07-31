@@ -1,10 +1,10 @@
-const { setValue } = require('./lib/async');
-const { evaluateEmbed } = require('./lib/builder');
+import { setValue } from './lib/async';
+import { evaluateEmbed } from './lib/builder';
 
 /**
  * @param {import('node-red').NodeAPI} RED
  */
-module.exports = function (RED) {
+export default function (RED) {
     function DiscordEmbedBuilderNode(config) {
         RED.nodes.createNode(this, config);
         this.name = config.name;
@@ -20,4 +20,4 @@ module.exports = function (RED) {
         });
     }
     RED.nodes.registerType('discord.builder.embed', DiscordEmbedBuilderNode);
-};
+}

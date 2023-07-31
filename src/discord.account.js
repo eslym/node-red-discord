@@ -1,10 +1,10 @@
-const Flatted = require('flatted');
-const { setValue } = require('./lib/async.js');
+import * as Flatted from 'flatted';
+import { setValue } from './lib/async.js';
 
 /**
  * @param {import('node-red').NodeAPI} RED
  */
-module.exports = function (RED) {
+export default function (RED) {
     function DiscordAccountNode(config) {
         RED.nodes.createNode(this, config);
 
@@ -50,4 +50,4 @@ module.exports = function (RED) {
         });
     }
     RED.nodes.registerType('discord.account', DiscordAccountNode);
-};
+}

@@ -1,10 +1,10 @@
-const { Client } = require('discord.js');
-const { declareAPI } = require('./lib/api');
+import { Client } from 'discord.js';
+import { declareAPI } from './lib/api';
 
 /**
  * @param {import('node-red').NodeAPI} RED
  */
-module.exports = function (RED) {
+export default function (RED) {
     function DiscordClientNode(config) {
         RED.nodes.createNode(this, config);
         this.name = config.name;
@@ -87,4 +87,4 @@ module.exports = function (RED) {
     });
 
     declareAPI(RED);
-};
+}

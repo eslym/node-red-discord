@@ -16,7 +16,7 @@ function* r(data) {
         yield JSON.stringify(data['imports'][index]['path']);
         yield ';\n';
     }
-    yield "import { registerHelper } from './helper.js'; window.SIREX = window.SIREX || {};\n\nif(!window.SIREX[";
+    yield "import { registerHelper } from './helper.js';\n\nwindow.SIREX = window.SIREX || {};\n\nif(!window.SIREX[";
     yield JSON.stringify(data['packageName']);
     yield ']) {\n    const entries = {\n';
     for (let index = 0; index < data['imports'].length; index++) {

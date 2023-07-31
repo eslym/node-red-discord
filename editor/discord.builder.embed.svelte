@@ -1,6 +1,6 @@
 <script context="module">
     export function register(render, update, revert) {
-        RED.nodes.registerType('discord.builder.message', {
+        RED.nodes.registerType('discord.builder.embed', {
             category: 'discord builder',
             color: '#f2f3f5',
             icon: 'discord.png',
@@ -19,19 +19,19 @@
                     value: 'payload',
                     required: true
                 },
-                message: {
+                embed: {
                     value: {},
                     required: true
                 }
             },
             label: function () {
-                return this.name || 'Message Builder';
+                return this.name || 'Embed Builder';
             },
-            paletteLabel: 'Message Builder',
+            paletteLabel: 'Embed Builder',
             inputs: 1,
             outputs: 1,
             oneditprepare: function () {
-                render(this);
+                render(this, { minWidth: '500px' });
             },
             oneditsave: function () {
                 update(this);
@@ -45,7 +45,7 @@
 
 <script>
     import { TypedInput } from 'svelte-integration-red/components';
-    import MessageBuilder from './components/MessageBuilder.svelte';
+    import EmbedBuilder from './components/EmbedBuilder.svelte';
 
     export let node;
 </script>
@@ -58,4 +58,4 @@
     types={['msg', 'flow', 'global']}
 />
 
-<MessageBuilder bind:node bind:msg={node.msg} />
+<EmbedBuilder bind:node bind:embed={node.embed} />

@@ -1,7 +1,7 @@
 /**
  * @param {import('node-red').NodeAPI} RED
  */
-function declareAPI(RED) {
+export function declareAPI(RED) {
     function getClient(req, res, next) {
         let node = RED.nodes.getNode(req.params.node);
         if (!node || node.type !== 'discord.client') {
@@ -237,5 +237,3 @@ function declareAPI(RED) {
         }
     );
 }
-
-module.exports = { declareAPI };

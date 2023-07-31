@@ -6,15 +6,20 @@ const svelte = require('rollup-plugin-svelte');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const commonjs = require('@rollup/plugin-commonjs');
 const css = require('rollup-plugin-import-css');
+const { builtinModules } = require('node:module');
 
 const entryTemplate = require('./templates/entries.js');
 const nodeTemplate = require('./templates/html.js');
 
+const resourcesDir = path.resolve('resources');
+const tempDir = path.resolve('.build');
+const distDir = path.resolve('dist');
+
 async function build() {
-    if (fs.existsSync('.build')) {
-        fs.rmSync('.build', { recursive: true, force: true });
+    if (fs.existsSync(tempDir)) {
+        fs.rmSync(tempDir, { recursive: true, force: true });
     }
-    fs.mkdirSync('.build');
+    fs.mkdirSync(tempDir);
 
     console.time('prepare for build');
 
@@ -22,21 +27,24 @@ async function build() {
     const nodes = packageJson['node-red'].nodes;
     const imports = Object.entries(nodes).map(([name, file]) => ({
         name,
-        path: unixPath.relative('.build/', file.replace(/\.js$/, '.svelte'))
+        path: unixPath.relative(
+            `${tempDir}/`,
+            file.replace(/^dist\//, 'editor/').replace(/\.js$/, '.svelte')
+        )
     }));
 
     fs.writeFileSync(
-        '.build/bundle.js',
+        path.join(tempDir, 'bundle.js'),
         entryTemplate({ packageName: packageJson.name, version: packageJson.version, imports })
     );
-    fs.copyFileSync(path.join(__dirname, 'helper.js'), '.build/helper.js');
+    fs.copyFileSync(path.join(__dirname, 'helper.js'), path.join(tempDir, 'helper.js'));
 
     console.timeEnd('prepare for build');
 
     console.time('build shared bundle');
 
     const result = await rollup.rollup({
-        input: '.build/bundle.js',
+        input: path.join(tempDir, 'bundle.js'),
         plugins: [
             svelte({
                 extensions: ['.svelte'],
@@ -54,17 +62,27 @@ async function build() {
         ]
     });
 
-    if (fs.existsSync('resources')) {
-        fs.rmSync('resources', { recursive: true, force: true });
+    if (fs.existsSync(resourcesDir)) {
+        fs.rmSync(resourcesDir, { recursive: true, force: true });
     }
 
     await result.write({
-        dir: 'resources',
+        dir: resourcesDir,
         sourcemap: true,
         format: 'esm'
     });
 
     console.timeEnd('build shared bundle');
+
+    if (fs.existsSync(distDir)) {
+        fs.rmSync(distDir, { recursive: true, force: true });
+    }
+    fs.mkdirSync(distDir);
+
+    const entries = Object.entries(nodes).map(([name, file]) => [
+        path.basename(file, '.js'),
+        file.replace(/^dist\//, 'src/')
+    ]);
 
     for (const [name, file] of Object.entries(nodes)) {
         let outFile = file.replace(/\.js$/, '.html');
@@ -75,8 +93,8 @@ async function build() {
             name,
             file
         };
-        let htmlDoc = file.replace(/\.js$/, '.doc.html');
-        let mdDoc = file.replace(/\.js$/, '.doc.md');
+        let htmlDoc = file.replace(/^dist\//, 'editor/').replace(/\.js$/, '.doc.html');
+        let mdDoc = file.replace(/^dist\//, 'editor/').replace(/\.js$/, '.doc.md');
         if (fs.existsSync(htmlDoc)) {
             opts.docContent = fs.readFileSync(htmlDoc, 'utf8');
             opts.docType = 'text/html';
@@ -87,6 +105,29 @@ async function build() {
         fs.writeFileSync(outFile, nodeTemplate(opts));
         console.timeEnd(`build ${outFile}`);
     }
+
+    fs.mkdirSync(path.join(distDir, 'icons'));
+    fs.copyFileSync(path.join('icons/discord.png'), path.join(distDir, 'icons/discord.png'));
+
+    console.time('build backend bundle');
+    await (
+        await rollup.rollup({
+            input: Object.fromEntries(entries),
+            plugins: [
+                commonjs(),
+                nodeResolve({
+                    preferBuiltins: true
+                })
+            ],
+            external: [...Object.keys(packageJson.dependencies), /^node:/, ...builtinModules]
+        })
+    ).write({
+        dir: distDir,
+        sourcemap: true,
+        format: 'commonjs',
+        chunkFileNames: 'lib/[name].js'
+    });
+    console.timeEnd('build backend bundle');
 }
 
 build();
