@@ -10,9 +10,9 @@
 
     function getComponentHeader(component) {
         if (component.type === 2) {
-            return component.label ?? component.custom_id
-                ? `Button: ${component.custom_id}`
-                : 'Button';
+            if (component.label) return component.label;
+            if (component.custom_id) return `Button: ${component.custom_id}`;
+            return 'Button';
         }
         return component.custom_id ? `Select Menu: ${component.custom_id}` : 'Select Menu';
     }

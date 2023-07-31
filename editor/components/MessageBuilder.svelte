@@ -1,3 +1,14 @@
+<script context="module">
+    export function newRecord() {
+        return {
+            content: '',
+            embeds: [],
+            components: [],
+            attachments: []
+        };
+    }
+</script>
+
 <script>
     import { Button, Collapsible } from 'svelte-integration-red/components';
     import EmbedBuilder, { newRecord as newEmbed } from './EmbedBuilder.svelte';
@@ -18,12 +29,7 @@
             attachments: []
         };
     } else if (msg === undefined) {
-        msg = {
-            content: '',
-            embeds: [],
-            components: [],
-            attachments: []
-        };
+        msg = newRecord();
     }
 </script>
 

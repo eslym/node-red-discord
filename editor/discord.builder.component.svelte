@@ -1,6 +1,6 @@
 <script context="module">
     export function register(render, update, revert) {
-        RED.nodes.registerType('discord.builder.message', {
+        RED.nodes.registerType('discord.builder.component', {
             category: 'discord builder',
             color: '#f2f3f5',
             icon: 'discord.png',
@@ -19,15 +19,15 @@
                     value: 'payload',
                     required: true
                 },
-                message: {
+                component: {
                     value: newRecord(),
                     required: true
                 }
             },
             label: function () {
-                return this.name || 'Message Builder';
+                return this.name || 'Component Builder';
             },
-            paletteLabel: 'Message Builder',
+            paletteLabel: 'Component Builder',
             inputs: 1,
             outputs: 1,
             oneditprepare: function () {
@@ -45,7 +45,9 @@
 
 <script>
     import { TypedInput } from 'svelte-integration-red/components';
-    import MessageBuilder, { newRecord } from './components/MessageBuilder.svelte';
+    import MessageComponentBuilder, {
+        newRecord
+    } from './components/MessageComponentBuilder.svelte';
 
     export let node;
 </script>
@@ -58,4 +60,4 @@
     types={['msg', 'flow', 'global']}
 />
 
-<MessageBuilder bind:node bind:msg={node.msg} />
+<MessageComponentBuilder bind:component={node.component} />

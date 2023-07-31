@@ -1,8 +1,16 @@
-# Migrating from https://github.com/eslym/node-red-discord-alternative
+# @eslym/node-red-discord
+
+Integrate discord.js into Node-RED
+
+> _Migrating from [node-red-discord-alternative](https://github.com/eslym/node-red-discord-alternative)_
 
 ## Todo
 
 -   [x] Send discord messages
--   [ ] Message builder
+-   [x] Message builder
+    -   [x] Embed Builder
+    -   [x] Component Builder
+    -   [ ] Attachment Builder
+    -   [ ] Validations
 -   [ ] Manage Roles
 -   [ ] Interactions

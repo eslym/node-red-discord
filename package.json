@@ -1,9 +1,17 @@
 {
     "name": "@eslym/node-red-discord",
-    "version": "0.0.1-alpha.0",
+    "version": "0.0.1-alpha.1",
     "description": "discord.js for node-red",
     "type": "commonjs",
     "license": "MIT",
+    "keywords": [
+        "node-red",
+        "discord"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/eslym/node-red-discord.git"
+    },
     "scripts": {
         "build": "node sirex/build.js",
         "format": "prettier --write .",
@@ -47,7 +55,8 @@
             "discord.event": "dist/discord.event.js",
             "discord.send": "dist/discord.send.js",
             "discord.builder.message": "dist/discord.builder.message.js",
-            "discord.builder.embed": "dist/discord.builder.embed.js"
+            "discord.builder.embed": "dist/discord.builder.embed.js",
+            "discord.builder.component": "dist/discord.builder.component.js"
         }
     }
 }

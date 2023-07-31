@@ -1,7 +1,7 @@
 import { promisify } from 'util';
 import Mustache from 'mustache';
 import Color from 'color';
-import { ButtonStyle } from 'discord.js';
+import { ButtonStyle, ComponentType } from 'discord.js';
 
 /**
  * @param {import('node-red').NodeAPI} RED
@@ -18,6 +18,16 @@ export async function evaluateMessage(RED, node, msg, message) {
     if (message.embeds && message.embeds.length) {
         result.embeds = await Promise.all(
             message.embeds.map((embed) => evaluateEmbed(RED, node, msg, embed))
+        );
+    }
+    if (message.components && message.components.length) {
+        result.components = await Promise.all(
+            message.components.map(async (row) => ({
+                type: ComponentType.ActionRow,
+                components: await Promise.all(
+                    row.map((component) => evaluateComponent(RED, node, msg, component))
+                )
+            }))
         );
     }
     return result;
@@ -102,9 +112,12 @@ export async function evaluateComponent(RED, node, msg, component) {
             await prop(component.disabled.value, component.disabled.type, node, msg)
         );
     }
-    if (component.type === 2) {
+    if (component.type === ComponentType.Button) {
         result.label = Mustache.render(component.label, msg);
         result.style = component.style;
+        if (component.emoji) {
+            result.emoji = await evaluateEmoji(component.emoji);
+        }
         if (component.style === ButtonStyle.Link) {
             result.url = Mustache.render(component.url, msg);
         } else {
@@ -131,10 +144,16 @@ export async function evaluateComponent(RED, node, msg, component) {
             msg
         );
     }
-    if (component.type === 3) {
+    if (component.type === ComponentType.StringSelect) {
         result.options = await Promise.all(
             component.options.map((option) => evaluateOption(RED, node, msg, option))
         );
+    } else if (
+        component.type === ComponentType.ChannelSelect &&
+        component.channel_types &&
+        component.channel_types.length
+    ) {
+        result.channel_types = component.channel_types;
     }
     return result;
 }
@@ -186,7 +205,21 @@ async function evaluateField(RED, node, msg, field) {
 }
 
 async function evaluateOption(RED, node, msg, option) {
-    // TODO: implement
+    const prop = promisify(RED.util.evaluateNodeProperty);
+    const result = {
+        label: Mustache.render(option.label, msg),
+        value: Mustache.render(option.value, msg)
+    };
+    if (option.description) {
+        result.description = Mustache.render(option.description, msg);
+    }
+    if (option.emoji) {
+        result.emoji = await evaluateEmoji(option.emoji);
+    }
+    if (option.default) {
+        result.default = boolVal(await prop(option.default.value, option.default.type, node, msg));
+    }
+    return result;
 }
 
 function boolVal(val) {
@@ -198,6 +231,21 @@ function boolVal(val) {
             return val === 1;
         default:
             return !!val;
+    }
+}
+
+async function evaluateEmoji(emoji) {
+    switch (emoji.type) {
+        case 'unicode':
+            return {
+                name: emoji.value
+            };
+        case 'guild':
+            return {
+                id: emoji.value
+            };
+        default:
+            return undefined;
     }
 }
 
