@@ -1,6 +1,7 @@
 import { promisify } from 'util';
 import Mustache from 'mustache';
 import Color from 'color';
+import { ButtonStyle } from 'discord.js';
 
 /**
  * @param {import('node-red').NodeAPI} RED
@@ -91,6 +92,53 @@ export async function evaluateEmbed(RED, node, msg, embed) {
     return result;
 }
 
+export async function evaluateComponent(RED, node, msg, component) {
+    const prop = promisify(RED.util.evaluateNodeProperty);
+    const result = {
+        type: component.type
+    };
+    if (component.disabled.type !== 'undefined') {
+        result.disabled = boolVal(
+            await prop(component.disabled.value, component.disabled.type, node, msg)
+        );
+    }
+    if (component.type === 2) {
+        result.label = Mustache.render(component.label, msg);
+        result.style = component.style;
+        if (component.style === ButtonStyle.Link) {
+            result.url = Mustache.render(component.url, msg);
+        } else {
+            result.custom_id = Mustache.render(component.custom_id, msg);
+        }
+        return result;
+    }
+    if (component.placeholder) {
+        result.placeholder = Mustache.render(component.placeholder, msg);
+    }
+    if (component.minLength !== 'undefined') {
+        result.minLength = await prop(
+            component.minLength.value,
+            component.minLength.type,
+            node,
+            msg
+        );
+    }
+    if (component.maxLength !== 'undefined') {
+        result.maxLength = await prop(
+            component.maxLength.value,
+            component.maxLength.type,
+            node,
+            msg
+        );
+    }
+    if (component.type === 3) {
+        result.options = await Promise.all(
+            component.options.map((option) => evaluateOption(RED, node, msg, option))
+        );
+    }
+    return result;
+}
+
 /**
  * @param {import('node-red').NodeAPI} RED
  * @param {import('node-red').Node} node
@@ -135,6 +183,10 @@ async function evaluateField(RED, node, msg, field) {
         result.inline = boolVal(await prop(field.inline.value, field.inline.type, node, msg));
     }
     return result;
+}
+
+async function evaluateOption(RED, node, msg, option) {
+    // TODO: implement
 }
 
 function boolVal(val) {
