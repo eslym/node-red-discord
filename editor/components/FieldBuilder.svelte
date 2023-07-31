@@ -2,12 +2,6 @@
     import { Input, TypedInput } from 'svelte-integration-red/components';
 
     export let field;
-
-    $: if (typeof field !== 'object') {
-        field = {
-            inline: 'false'
-        };
-    }
 </script>
 
 <Input bind:value={field.name} placeholder="Name" label="Name" />

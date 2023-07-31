@@ -1,13 +1,16 @@
+<script context="module">
+    export function newRecord() {
+        return {
+            fields: [],
+            author: {},
+            footer: {}
+        };
+    }
+</script>
+
 <script>
     import { undefinedType } from '../lib/constants';
-    import {
-        Textarea,
-        Collapsible,
-        Input,
-        Row,
-        Button,
-        EditableList
-    } from 'svelte-integration-red/components';
+    import { Textarea, Collapsible, Input, Row, Button } from 'svelte-integration-red/components';
     import TypedInput from './TypedInput.svelte';
     import FieldBuilder from './FieldBuilder.svelte';
     import ImageBuilder from './ImageBuilder.svelte';
@@ -47,7 +50,7 @@
         icon="plus"
         label="Add Field"
         on:click={() => {
-            embed.fields = [...embed.fields, { inline: 'false' }];
+            embed.fields = [...embed.fields, { inline: { type: 'bool', value: 'false' } }];
         }}
     />
     <EditList

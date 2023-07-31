@@ -1,9 +1,8 @@
 <script>
     import { Button, Collapsible } from 'svelte-integration-red/components';
-    import EmbedBuilder from './EmbedBuilder.svelte';
-    import ActionRowBuilder from './ActionRowBuilder.svelte';
+    import EmbedBuilder, { newRecord as newEmbed } from './EmbedBuilder.svelte';
+    import ActionRowBuilder, { newComponent } from './ActionRowBuilder.svelte';
     import SearchEmojiPopup from './SearchEmojiPopup.svelte';
-    import { accessor } from '../lib/accessor';
     import EditList from './EditList.svelte';
 
     export let msg;
@@ -15,13 +14,15 @@
         msg = {
             content: msg,
             embeds: [],
-            components: []
+            components: [],
+            attachments: []
         };
     } else if (msg === undefined) {
         msg = {
             content: '',
             embeds: [],
-            components: []
+            components: [],
+            attachments: []
         };
     }
 </script>
@@ -52,14 +53,7 @@
         icon="plus"
         label="Add Embed"
         on:click={() => {
-            msg.embeds = [
-                ...msg.embeds,
-                {
-                    fields: [],
-                    author: {},
-                    footer: {}
-                }
-            ];
+            msg.embeds = [...msg.embeds, newEmbed()];
         }}
     />
     <EditList
@@ -93,13 +87,10 @@
                 inline
                 disabled={row.length > 0 && (row.length >= 5 || row[0].type !== 2)}
                 on:click={() => {
-                    msg.components[index] = [
-                        ...(msg.components[index] ?? []),
-                        { type: 2, style: 1 }
-                    ];
+                    msg.components[index] = [...(msg.components[index] ?? []), newComponent()];
                 }}
             />
         </svelte:fragment>
-        <ActionRowBuilder row={accessor(msg.components, index)} />
+        <ActionRowBuilder bind:row={msg.components[index]} />
     </EditList>
 </Collapsible>
