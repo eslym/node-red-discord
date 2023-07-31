@@ -54,6 +54,7 @@
             "discord.account": "dist/discord.account.js",
             "discord.event": "dist/discord.event.js",
             "discord.send": "dist/discord.send.js",
+            "discord.filterBot": "dist/discord.filterBot.js",
             "discord.builder.message": "dist/discord.builder.message.js",
             "discord.builder.embed": "dist/discord.builder.embed.js",
             "discord.builder.component": "dist/discord.builder.component.js"

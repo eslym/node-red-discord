@@ -1,7 +1,7 @@
 <script context="module">
     export function register(render, update, revert) {
         RED.nodes.registerType('discord.event', {
-            category: 'discord',
+            category: 'discord general',
             color: '#f2f3f5',
             defaults: {
                 name: {
@@ -22,7 +22,7 @@
             outputs: 1,
             icon: 'discord.png',
             label: function () {
-                return this.name || this.event ? 'Listen ' + this.event : 'Listen';
+                return this.name || this.event ? map[this.event] : 'Listen';
             },
             paletteLabel: 'Listen',
             oneditprepare: function () {
@@ -109,12 +109,21 @@
             guildScheduledEventUserAdd: 'Guild Scheduled Event User Add',
             guildScheduledEventUserRemove: 'Guild Scheduled Event User Remove'
         },
+        Interaction: {
+            interactionCreate: 'Interaction Create'
+        },
         Client: {
             ready: 'Ready',
             error: 'Error',
             warn: 'Warning'
         }
     };
+
+    const map = Object.fromEntries(
+        Object.values(events)
+            .map((c) => Object.entries(c))
+            .flat()
+    );
 </script>
 
 <script>

@@ -27,16 +27,18 @@ export default function (RED) {
             });
         };
         let eventHandler = (...args) => {
+            let context = Object.freeze({
+                $lib: dcjs,
+                client: this.clientNode.getDiscordClient(),
+                event: this.event,
+                eventArgs: Object.freeze([...args])
+            });
             if (this.event === 'ready') {
                 args = args[0].readyTimestamp;
-            } else if (args.leng == 0) args = undefined;
+            } else if (args.length == 0) args = undefined;
             else if (args.length == 1) {
                 args = args[0];
             }
-            let context = {
-                $lib: dcjs,
-                client: this.clientNode.getDiscordClient()
-            };
             let msg = {
                 _msgid: RED.util.generateId(),
                 $dc: () => context,

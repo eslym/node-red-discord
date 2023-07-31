@@ -5,7 +5,7 @@
 
     export function register(render, update, revert) {
         RED.nodes.registerType('discord.send', {
-            category: 'discord',
+            category: 'discord general',
             color: '#f2f3f5',
             icon: 'discord.png',
             defaults: {
