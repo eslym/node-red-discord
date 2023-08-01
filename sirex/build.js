@@ -7,6 +7,7 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const commonjs = require('@rollup/plugin-commonjs');
 const css = require('rollup-plugin-import-css');
 const { builtinModules } = require('node:module');
+const replace = require('@rollup/plugin-replace');
 
 const entryTemplate = require('./templates/entries.js');
 const nodeTemplate = require('./templates/html.js');
@@ -41,7 +42,7 @@ async function build() {
 
     console.timeEnd('prepare for build');
 
-    console.time('build shared bundle');
+    console.time('build editor bundle');
 
     const result = await rollup.rollup({
         input: path.join(tempDir, 'bundle.js'),
@@ -56,6 +57,12 @@ async function build() {
                 preferBuiltins: false
             }),
             commonjs(),
+            replace({
+                values: {
+                    __NODE_NAME__: (name) => JSON.stringify(path.basename(name, '.svelte'))
+                },
+                preventAssignment: true
+            }),
             css({
                 output: 'bundle.css'
             })
@@ -72,7 +79,7 @@ async function build() {
         format: 'esm'
     });
 
-    console.timeEnd('build shared bundle');
+    console.timeEnd('build editor bundle');
 
     if (fs.existsSync(distDir)) {
         fs.rmSync(distDir, { recursive: true, force: true });
@@ -93,8 +100,8 @@ async function build() {
             name,
             file
         };
-        let htmlDoc = file.replace(/^dist\//, 'editor/').replace(/\.js$/, '.doc.html');
-        let mdDoc = file.replace(/^dist\//, 'editor/').replace(/\.js$/, '.doc.md');
+        let htmlDoc = file.replace(/^dist\//, 'editor/doc/').replace(/\.js$/, '.html');
+        let mdDoc = file.replace(/^dist\//, 'editor/doc/').replace(/\.js$/, '.md');
         if (fs.existsSync(htmlDoc)) {
             opts.docContent = fs.readFileSync(htmlDoc, 'utf8');
             opts.docType = 'text/html';
@@ -117,6 +124,12 @@ async function build() {
                 commonjs(),
                 nodeResolve({
                     preferBuiltins: true
+                }),
+                replace({
+                    values: {
+                        __NODE_NAME__: (name) => JSON.stringify(path.basename(name, '.js'))
+                    },
+                    preventAssignment: true
                 })
             ],
             external: [...Object.keys(packageJson.dependencies), /^node:/, ...builtinModules]

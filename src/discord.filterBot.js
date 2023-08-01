@@ -36,5 +36,5 @@ export default function (RED) {
             }
         });
     }
-    RED.nodes.registerType('discord.filterBot', DiscordFilterBotNode);
+    RED.nodes.registerType(__NODE_NAME__, DiscordFilterBotNode);
 }

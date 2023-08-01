@@ -1,12 +1,12 @@
 <script context="module">
-    import { noneType, builderType, clientNodeContextKey } from './lib/constants.js';
+    import { noneType, builderType, clientNodeContextKey, nodeColor } from './lib/constants.js';
 
     const messageTypes = ['msg', 'flow', 'global', 'env', 'str', 'json', 'jsonata', builderType];
 
     export function register(render, update, revert) {
-        RED.nodes.registerType('discord.send', {
+        RED.nodes.registerType(__NODE_NAME__, {
             category: 'discord general',
-            color: '#f2f3f5',
+            color: nodeColor,
             icon: 'discord.png',
             defaults: {
                 name: {

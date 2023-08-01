@@ -102,5 +102,5 @@ export default function (RED) {
             }
         });
     }
-    RED.nodes.registerType('discord.send', DiscordSendNode);
+    RED.nodes.registerType(__NODE_NAME__, DiscordSendNode);
 }

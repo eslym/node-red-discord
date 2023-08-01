@@ -19,5 +19,5 @@ export default function (RED) {
             }
         });
     }
-    RED.nodes.registerType('discord.builder.component', DiscordComponentBuilderNode);
+    RED.nodes.registerType(__NODE_NAME__, DiscordComponentBuilderNode);
 }

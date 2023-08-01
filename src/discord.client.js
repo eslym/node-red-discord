@@ -80,7 +80,7 @@ export default function (RED) {
         }
     };
 
-    RED.nodes.registerType('discord.client', DiscordClientNode, {
+    RED.nodes.registerType(__NODE_NAME__, DiscordClientNode, {
         credentials: {
             token: { type: 'text' }
         }

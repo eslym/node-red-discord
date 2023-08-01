@@ -1,6 +1,6 @@
 <script context="module">
     export function register(render, update, revert) {
-        RED.nodes.registerType('discord.client', {
+        RED.nodes.registerType(__NODE_NAME__, {
             category: 'config',
             defaults: {
                 name: {

@@ -63,5 +63,5 @@ export default function (RED) {
             done();
         });
     }
-    RED.nodes.registerType('discord.event', DiscordEventNode);
+    RED.nodes.registerType(__NODE_NAME__, DiscordEventNode);
 }

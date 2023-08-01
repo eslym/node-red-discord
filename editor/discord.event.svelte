@@ -1,8 +1,8 @@
 <script context="module">
     export function register(render, update, revert) {
-        RED.nodes.registerType('discord.event', {
+        RED.nodes.registerType(__NODE_NAME__, {
             category: 'discord general',
-            color: '#f2f3f5',
+            color: nodeColor,
             defaults: {
                 name: {
                     value: '',
@@ -128,6 +128,7 @@
 
 <script>
     import { Input, Select } from 'svelte-integration-red/components';
+    import { nodeColor } from './lib/constants';
 
     export let node;
 </script>

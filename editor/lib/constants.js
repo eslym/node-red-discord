@@ -19,3 +19,5 @@ export const builderType = {
 };
 
 export const clientNodeContextKey = Symbol('clientNode');
+
+export const nodeColor = '#f2f3f5';

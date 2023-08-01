@@ -1,8 +1,8 @@
 <script context="module">
     export function register(render, update, revert) {
-        RED.nodes.registerType('discord.builder.component', {
+        RED.nodes.registerType(__NODE_NAME__, {
             category: 'discord builder',
-            color: '#f2f3f5',
+            color: nodeColor,
             icon: 'discord.png',
             defaults: {
                 name: {
@@ -48,6 +48,7 @@
     import MessageComponentBuilder, {
         newRecord
     } from './components/MessageComponentBuilder.svelte';
+    import { nodeColor } from './lib/constants';
 
     export let node;
 </script>
