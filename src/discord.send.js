@@ -49,7 +49,7 @@ export default function (RED) {
                 }
 
                 /** @type {import('discord.js').Client} */
-                let client = config.useMsg ? msg.$dc().client : this.clientNode.client;
+                let client = config.useMsg ? msg.$dc().client : this.clientNode.discordClient;
 
                 let ch = await client.channels.fetch(channel);
 

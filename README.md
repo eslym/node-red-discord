@@ -12,5 +12,6 @@ Integrate discord.js into Node-RED
     -   [x] Component Builder
     -   [ ] Attachment Builder
     -   [ ] Validations
--   [ ] Manage Roles
+-   [ ] Manage Member Roles
 -   [ ] Interactions
+-   [ ] Command Builder

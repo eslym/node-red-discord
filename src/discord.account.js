@@ -24,7 +24,7 @@ export default function (RED) {
         this.on('input', async (msg, send, done) => {
             try {
                 /** @type {import('discord.js').Client} */
-                let client = config.useMsg ? msg.$dc().client : this.clientNode.client;
+                let client = config.useMsg ? msg.$dc().client : this.clientNode.discordClient;
                 await setValue(
                     RED,
                     this,
