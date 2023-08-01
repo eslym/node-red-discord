@@ -1,5 +1,3 @@
-const messageEvents = new Set(['messageCreate', 'messageDelete', 'messageUpdate']);
-
 /**
  * @param {import('node-red').NodeAPI} RED
  */
@@ -11,17 +9,32 @@ export default function (RED) {
         this.on('input', (msg, send, done) => {
             try {
                 const ctx = msg.$dc();
-                if (!messageEvents.has(ctx.event)) {
-                    this.status({
-                        fill: 'red',
-                        shape: 'dot',
-                        text: 'not message event'
-                    });
-                    return done(new Error('Input is not from a discord message event'));
+                let isBot;
+                switch (ctx.event) {
+                    case 'messageCreate':
+                    case 'messageDelete':
+                    case 'messageUpdate':
+                        /** @type {import('discord.js').Message} */
+                        const message = ctx.eventArgs[0];
+                        isBot = message.author.bot;
+                        break;
+                    case 'guildMemberAdd':
+                    case 'guildMemberAvailable':
+                    case 'guildMemberUpdate':
+                    case 'userUpdate':
+                        /** @type {import('discord.js').GuildMember} */
+                        const member = ctx.eventArgs[0];
+                        isBot = member.user.bot;
+                        break;
+                    default:
+                        this.status({
+                            fill: 'red',
+                            shape: 'dot',
+                            text: 'not message event'
+                        });
+                        return done(new Error('Input is not from a discord message event'));
                 }
-                /** @type {import('discord.js').Message} */
-                const message = ctx.eventArgs[0];
-                if (message.author.bot) {
+                if (isBot) {
                     send([null, msg]);
                 } else {
                     send([msg, null]);

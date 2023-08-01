@@ -1,4 +1,4 @@
-Filter message from bot
+Ignore events triggerd by bots
 
 ### Input
 

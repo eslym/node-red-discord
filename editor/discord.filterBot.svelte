@@ -16,9 +16,9 @@
             outputs: 1,
             icon: 'discord.png',
             label: function () {
-                return this.name || 'Filter Bot Message';
+                return this.name || 'Ignore Bot';
             },
-            paletteLabel: 'Filter Bot Message',
+            paletteLabel: 'Ignore Bot',
             outputLabels: ['not bot', 'is bot'],
             oneditprepare: function () {
                 render(this);
@@ -47,5 +47,7 @@
 <Input type="checkbox" label="Output for bot message" bind:value={elseCase} />
 <p>
     Applicable events: <code>messageCreate</code>, <code>messageUpdate</code>,
-    <code>messageDelete</code>
+    <code>messageDelete</code>,
+    <code>guildMemberAdd</code>, <code>guildMemberAvailable</code>, <code>guildMemberUpdate</code>,
+    <code>userUpdate</code>
 </p>

@@ -1,5 +1,6 @@
 import * as dcjs from 'discord.js';
 import * as Flatted from 'flatted';
+import { mapInteraction } from './lib/interaction';
 
 /**
  * @param {import('node-red').NodeAPI} RED
@@ -33,18 +34,27 @@ export default function (RED) {
                 event: this.event,
                 eventArgs: Object.freeze([...args])
             });
-            if (this.event === 'ready') {
-                args = args[0].readyTimestamp;
-            } else if (args.length == 0) args = undefined;
-            else if (args.length == 1) {
-                args = args[0];
-            }
             let msg = {
                 _msgid: RED.util.generateId(),
                 $dc: () => context,
                 topic: config.event,
-                payload: Flatted.parse(Flatted.stringify(args))
+                payload: args
             };
+            switch (this.event) {
+                case 'ready':
+                    msg.payload = args[0].readyTimestamp;
+                    break;
+                case 'interactionCreate':
+                    msg.payload = Flatted.parse(Flatted.stringify(mapInteraction(args[0])));
+                    break;
+                default:
+                    if (args.length == 0) args = undefined;
+                    else if (args.length == 1) {
+                        args = args[0];
+                    }
+                    msg.payload = Flatted.parse(Flatted.stringify(args));
+                    break;
+            }
             this.send(msg);
         };
 
