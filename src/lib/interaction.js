@@ -3,7 +3,12 @@
  */
 export function mapInteraction(interaction) {
     let res = {
-        $instance: () => interaction
+        $instance: () => interaction,
+        guildId: interaction.guildId,
+        channelId: interaction.channelId,
+        message: interaction.message,
+        member: interaction.member,
+        user: interaction.user
     };
     if (interaction.isAnySelectMenu()) {
         res.type = 'select';
@@ -18,33 +23,19 @@ export function mapInteraction(interaction) {
         } else if (interaction.isStringSelectMenu()) {
             res.selectType = 'string';
         }
-        res.guildId = interaction.guildId;
-        res.channelId = interaction.channelId;
-        res.message = interaction.message;
         res.customId = interaction.customId;
         res.values = interaction.values;
-        res.member = interaction.member;
-        res.user = interaction.user;
         return res;
     }
     if (interaction.isButton()) {
         res.type = 'button';
-        res.guildId = interaction.guildId;
-        res.channelId = interaction.channelId;
-        res.message = interaction.message;
         res.customId = interaction.customId;
-        res.member = interaction.member;
-        res.user = interaction.user;
         return res;
     }
     if (interaction.isCommand()) {
         res.type = 'command';
-        res.guildId = interaction.guildId;
-        res.channelId = interaction.channelId;
         res.commandName = interaction.commandName;
         res.options = mapCommandOptions(interaction.options.data);
-        res.member = interaction.member;
-        res.user = interaction.user;
         if (interaction.isMessageContextMenuCommand()) {
             res.commandType = 'messageContextMenu';
         } else if (interaction.isUserContextMenuCommand()) {
@@ -56,12 +47,8 @@ export function mapInteraction(interaction) {
     }
     if (interaction.isModalSubmit()) {
         res.type = 'modal';
-        res.guildId = interaction.guildId;
-        res.channelId = interaction.channelId;
         res.message = interaction.message;
         res.customId = interaction.customId;
-        res.member = interaction.member;
-        res.user = interaction.user;
         res.values = Object.fromEntries(
             interaction.fields.fields.map((com) => [com.customId, com.value])
         );
