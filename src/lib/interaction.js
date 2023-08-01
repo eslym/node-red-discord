@@ -4,6 +4,7 @@
 export function mapInteraction(interaction) {
     let res = {
         $instance: () => interaction,
+        id: interaction.id,
         guildId: interaction.guildId,
         channelId: interaction.channelId,
         message: interaction.message,

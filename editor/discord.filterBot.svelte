@@ -44,7 +44,7 @@
 </script>
 
 <Input bind:node prop="name" label="Name" type="text" />
-<Input type="checkbox" label="Output for bot message" bind:value={elseCase} />
+<Input type="checkbox" label="Output for else case" bind:value={elseCase} />
 <p>
     Applicable events: <code>messageCreate</code>, <code>messageUpdate</code>,
     <code>messageDelete</code>,
