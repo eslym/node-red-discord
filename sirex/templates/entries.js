@@ -34,9 +34,9 @@ function* r(data) {
     yield JSON.stringify(data['packageName']);
     yield ',\n                version:';
     yield JSON.stringify(data['version']);
-    yield "\n            }, entries, name)\n        },\n        entries\n    };\n\n    const link = document.createElement('link');\n    link.rel = 'stylesheet';\n    link.href = `resources/${ ";
+    yield "\n            }, entries, name)\n        },\n        entries\n    };\n\n    const self = new URL(import.meta.url);\n\n    const link = document.createElement('link');\n    link.rel = 'stylesheet';\n    link.href = `resources/${ ";
     yield JSON.stringify(data['packageName']);
-    yield ' }/bundle.css`;\n    document.head.appendChild(link);\n} else {\n    console.warn(`SIREX: Package';
+    yield " }/bundle.css?v=${ self.searchParams.get('v') }`;\n    document.head.appendChild(link);\n} else {\n    console.warn(`SIREX: Package";
     yield JSON.stringify(data['packageName']);
     yield 'already exists.`)\n}\n\nexport default window.SIREX[';
     yield JSON.stringify(data['packageName']);

@@ -21,9 +21,11 @@ if(!window.SIREX[{{{json packageName }}}]) {
         entries
     };
 
+    const self = new URL(import.meta.url);
+
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = `resources/${ {{{json packageName}}} }/bundle.css`;
+    link.href = `resources/${ {{{json packageName}}} }/bundle.css?v=${ self.searchParams.get('v') }`;
     document.head.appendChild(link);
 } else {
     console.warn(`SIREX: Package{{{json packageName}}}already exists.`)

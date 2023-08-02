@@ -9,7 +9,9 @@
 function* r(data) {
     yield "<script type='module' src='resources/";
     yield e(data['packageName']);
-    yield "/bundle.js'></script>\n\n<script type='text/javascript'>\n    window.SIREX[";
+    yield '/bundle.js?v=';
+    yield e(data['bundleVersion']);
+    yield "'></script>\n\n<script type='text/javascript'>\n    window.SIREX[";
     yield JSON.stringify(data['packageName']);
     yield '].register(';
     yield JSON.stringify(data['name']);

@@ -8,6 +8,7 @@ const commonjs = require('@rollup/plugin-commonjs');
 const css = require('rollup-plugin-import-css');
 const { builtinModules } = require('node:module');
 const replace = require('@rollup/plugin-replace');
+const crypto = require('crypto');
 
 const entryTemplate = require('./templates/entries.js');
 const nodeTemplate = require('./templates/html.js');
@@ -73,13 +74,19 @@ async function build() {
         fs.rmSync(resourcesDir, { recursive: true, force: true });
     }
 
-    await result.write({
+    const res = await result.write({
         dir: resourcesDir,
         sourcemap: true,
         format: 'esm'
     });
 
     console.timeEnd('build editor bundle');
+
+    const sha1 = crypto.createHash('sha1');
+    for (const chunk of res.output) {
+        sha1.update(chunk.type === 'chunk' ? chunk.code : chunk.source);
+    }
+    const hash = sha1.digest('hex');
 
     if (fs.existsSync(distDir)) {
         fs.rmSync(distDir, { recursive: true, force: true });
@@ -126,6 +133,7 @@ async function build() {
         let opts = {
             packageName: packageJson.name,
             version: packageJson.version,
+            bundleVersion: hash,
             name,
             file
         };
