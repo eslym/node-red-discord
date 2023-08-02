@@ -9,8 +9,7 @@
                     required: false
                 },
                 useMsg: {
-                    value: false,
-                    type: 'bool'
+                    value: false
                 },
                 client: {
                     value: '',

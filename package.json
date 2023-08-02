@@ -50,6 +50,7 @@
         "dist/**/*.js"
     ],
     "node-red": {
+        "version": ">=3.0",
         "nodes": {
             "discord.client": "dist/discord.client.js",
             "discord.account": "dist/discord.account.js",
@@ -61,5 +62,8 @@
             "discord.builder.component": "dist/discord.builder.component.js",
             "discord.presence.activity": "dist/discord.presence.activity.js"
         }
+    },
+    "engines": {
+        "node": ">=16.9.0"
     }
 }

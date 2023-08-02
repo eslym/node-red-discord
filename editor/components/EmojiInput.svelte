@@ -5,6 +5,7 @@
     import TypedInput from './TypedInput.svelte';
     import { undefinedType, clientNodeContextKey } from '../lib/constants';
     import SearchEmojiPopup from './SearchEmojiPopup.svelte';
+    import { fetchWithCreds as fetch } from '../lib/fetch.js';
 
     const unicodeType = {
         value: 'unicode',

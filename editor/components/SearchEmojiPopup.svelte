@@ -1,10 +1,11 @@
 <script>
     import { writable } from 'svelte/store';
-    import { Popup, Select } from 'svelte-integration-red/components';
+    import { Popup, Select, Button } from 'svelte-integration-red/components';
     import { closePopup } from 'svelte-integration-red/components/Popup.svelte';
     import { getContext, createEventDispatcher } from 'svelte';
     import { clientNodeContextKey } from '../lib/constants';
     import SearchEmoji from './SearchEmoji.svelte';
+    import { fetchWithCreds as fetch } from '../lib/fetch.js';
 
     const dispatch = createEventDispatcher();
 
@@ -55,4 +56,7 @@
             {/await}
         {/if}
     {/await}
+    <span slot="buttons">
+        <Button label="Close" on:click={() => closePopup(popupId)} />
+    </span>
 </Popup>

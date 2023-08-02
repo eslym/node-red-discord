@@ -1,6 +1,7 @@
 <script>
     import { Input, Collapsible } from 'svelte-integration-red/components';
     import { createEventDispatcher } from 'svelte';
+    import { fetchWithCreds as fetch } from '../lib/fetch.js';
 
     export let clientNode;
     export let load = true;

@@ -74,6 +74,7 @@
 <script>
     import { Input, ToggleGroup, Collapsible, Button } from 'svelte-integration-red/components';
     import InviteBotPopup from './components/InviteBotPopup.svelte';
+    import { fetchWithCreds as fetch } from './lib/fetch.js';
 
     export let node;
 
