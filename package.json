@@ -1,6 +1,6 @@
 {
     "name": "@eslym/node-red-discord",
-    "version": "0.0.1-alpha.2",
+    "version": "0.0.1-alpha.3",
     "description": "discord.js for node-red",
     "type": "commonjs",
     "license": "MIT",
