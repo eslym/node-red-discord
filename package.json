@@ -1,6 +1,6 @@
 {
     "name": "@eslym/node-red-discord",
-    "version": "0.0.1-alpha.3",
+    "version": "0.0.1-alpha.4",
     "description": "discord.js for node-red",
     "type": "commonjs",
     "license": "MIT",
@@ -44,9 +44,10 @@
         "mustache": "^4"
     },
     "files": [
-        "resources/**",
+        "resources/**/*.js",
+        "resources/**/*.css",
         "dist/icons/**",
-        "dist/*.html",
+        "dist/**/*.html",
         "dist/**/*.js"
     ],
     "node-red": {
