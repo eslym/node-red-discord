@@ -19,15 +19,15 @@
                     value: 'payload',
                     required: true
                 },
-                message: {
-                    value: newRecord(),
+                embed: {
+                    value: {},
                     required: true
                 }
             },
             label: function () {
-                return this.name || 'Message Builder';
+                return this.name || 'Embed Builder';
             },
-            paletteLabel: 'Message Builder',
+            paletteLabel: 'Embed Builder',
             inputs: 1,
             outputs: 1,
             oneditprepare: function () {
@@ -45,8 +45,8 @@
 
 <script>
     import { TypedInput } from 'svelte-integration-red/components';
-    import MessageBuilder, { newRecord } from './components/MessageBuilder.svelte';
-    import { nodeColor } from './lib/constants';
+    import EmbedBuilder from '../components/EmbedBuilder.svelte';
+    import { nodeColor } from '../lib/constants';
 
     export let node;
 </script>
@@ -59,4 +59,4 @@
     types={['msg', 'flow', 'global']}
 />
 
-<MessageBuilder bind:node bind:msg={node.msg} />
+<EmbedBuilder bind:node bind:embed={node.embed} />

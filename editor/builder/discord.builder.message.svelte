@@ -19,15 +19,15 @@
                     value: 'payload',
                     required: true
                 },
-                component: {
+                message: {
                     value: newRecord(),
                     required: true
                 }
             },
             label: function () {
-                return this.name || 'Component Builder';
+                return this.name || 'Message Builder';
             },
-            paletteLabel: 'Component Builder',
+            paletteLabel: 'Message Builder',
             inputs: 1,
             outputs: 1,
             oneditprepare: function () {
@@ -45,10 +45,8 @@
 
 <script>
     import { TypedInput } from 'svelte-integration-red/components';
-    import MessageComponentBuilder, {
-        newRecord
-    } from './components/MessageComponentBuilder.svelte';
-    import { nodeColor } from './lib/constants';
+    import MessageBuilder, { newRecord } from '../components/MessageBuilder.svelte';
+    import { nodeColor } from '../lib/constants';
 
     export let node;
 </script>
@@ -61,4 +59,4 @@
     types={['msg', 'flow', 'global']}
 />
 
-<MessageComponentBuilder bind:component={node.component} />
+<MessageBuilder bind:node bind:msg={node.msg} />

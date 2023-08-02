@@ -14,4 +14,12 @@ Integrate discord.js into Node-RED
     -   [ ] Validations
 -   [ ] Manage Member Roles
 -   [ ] Interactions
+    -   [ ] reply
+    -   [ ] followup
+    -   [ ] edit reply
+    -   [ ] delete reply
+    -   [ ] update message
+    -   [ ] defer reply
+    -   [ ] defer update
+    -   [ ] show modal
 -   [ ] Command Builder

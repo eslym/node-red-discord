@@ -1,5 +1,5 @@
-import { setValue } from './lib/async';
-import { evaluateComponent } from './lib/builder';
+import { setValue } from '../lib/async';
+import { evaluateComponent } from '../lib/builder';
 
 /**
  * @param {import('node-red').NodeAPI} RED

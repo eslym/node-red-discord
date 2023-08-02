@@ -57,9 +57,9 @@
             "discord.event": "dist/discord.event.js",
             "discord.send": "dist/discord.send.js",
             "discord.filterBot": "dist/discord.filterBot.js",
-            "discord.builder.message": "dist/discord.builder.message.js",
-            "discord.builder.embed": "dist/discord.builder.embed.js",
-            "discord.builder.component": "dist/discord.builder.component.js",
+            "discord.builder.message": "dist/builder/discord.builder.message.js",
+            "discord.builder.embed": "dist/builder/discord.builder.embed.js",
+            "discord.builder.component": "dist/builder/discord.builder.component.js",
             "discord.presence.activity": "dist/discord.presence.activity.js"
         }
     },

@@ -87,31 +87,9 @@ async function build() {
     fs.mkdirSync(distDir);
 
     const entries = Object.entries(nodes).map(([name, file]) => [
-        path.basename(file, '.js'),
+        file.replace(/^dist\//, '').replace(/\.js$/i, ''),
         file.replace(/^dist\//, 'src/')
     ]);
-
-    for (const [name, file] of Object.entries(nodes)) {
-        let outFile = file.replace(/\.js$/, '.html');
-        console.time(`build ${outFile}`);
-        let opts = {
-            packageName: packageJson.name,
-            version: packageJson.version,
-            name,
-            file
-        };
-        let htmlDoc = file.replace(/^dist\//, 'editor/doc/').replace(/\.js$/, '.html');
-        let mdDoc = file.replace(/^dist\//, 'editor/doc/').replace(/\.js$/, '.md');
-        if (fs.existsSync(htmlDoc)) {
-            opts.docContent = fs.readFileSync(htmlDoc, 'utf8');
-            opts.docType = 'text/html';
-        } else if (fs.existsSync(mdDoc)) {
-            opts.docContent = fs.readFileSync(mdDoc, 'utf8');
-            opts.docType = 'text/markdown';
-        }
-        fs.writeFileSync(outFile, nodeTemplate(opts));
-        console.timeEnd(`build ${outFile}`);
-    }
 
     fs.mkdirSync(path.join(distDir, 'icons'));
     fs.copyFileSync(path.join('icons/discord.png'), path.join(distDir, 'icons/discord.png'));
@@ -141,6 +119,28 @@ async function build() {
         chunkFileNames: 'lib/[name].js'
     });
     console.timeEnd('build backend bundle');
+
+    for (const [name, file] of Object.entries(nodes)) {
+        let outFile = file.replace(/\.js$/, '.html');
+        console.time(`build ${outFile}`);
+        let opts = {
+            packageName: packageJson.name,
+            version: packageJson.version,
+            name,
+            file
+        };
+        let htmlDoc = file.replace(/^dist\//, 'editor/doc/').replace(/\.js$/, '.html');
+        let mdDoc = file.replace(/^dist\//, 'editor/doc/').replace(/\.js$/, '.md');
+        if (fs.existsSync(htmlDoc)) {
+            opts.docContent = fs.readFileSync(htmlDoc, 'utf8');
+            opts.docType = 'text/html';
+        } else if (fs.existsSync(mdDoc)) {
+            opts.docContent = fs.readFileSync(mdDoc, 'utf8');
+            opts.docType = 'text/markdown';
+        }
+        fs.writeFileSync(outFile, nodeTemplate(opts));
+        console.timeEnd(`build ${outFile}`);
+    }
 }
 
 build();
