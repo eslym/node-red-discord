@@ -1,11 +1,8 @@
 <script context="module">
-    import icon from '$editor/icons/discord.png?red-icon';
-
     export function register(render, update, revert) {
         RED.nodes.registerType(__NODE_NAME__, {
+            ...baseNodeDef,
             category: 'discord builder',
-            color: nodeColor,
-            icon: icon,
             defaults: {
                 name: {
                     value: '',
@@ -51,7 +48,7 @@
     import MessageComponentBuilder, {
         newRecord
     } from '$editor/components/MessageComponentBuilder.svelte';
-    import { nodeColor } from '$editor/lib/constants';
+    import { baseNodeDef } from '$editor/lib/constants';
 
     export let node;
 </script>

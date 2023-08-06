@@ -3,17 +3,15 @@
         noneType,
         builderType,
         clientNodeContextKey,
-        nodeColor
+        baseNodeDef
     } from '$editor/lib/constants.js';
-    import icon from '$editor/icons/discord.png?red-icon';
 
     const messageTypes = ['msg', 'flow', 'global', 'env', 'str', 'json', 'jsonata', builderType];
 
     export function register(render, update, revert) {
         RED.nodes.registerType(__NODE_NAME__, {
+            ...baseNodeDef,
             category: 'discord general',
-            color: nodeColor,
-            icon: icon,
             defaults: {
                 name: {
                     value: '',

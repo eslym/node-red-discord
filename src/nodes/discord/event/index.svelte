@@ -1,10 +1,8 @@
 <script context="module">
-    import icon from '$editor/icons/discord.png?red-icon';
-
     export function register(render, update, revert) {
         RED.nodes.registerType(__NODE_NAME__, {
+            ...baseNodeDef,
             category: 'discord general',
-            color: nodeColor,
             defaults: {
                 name: {
                     value: '',
@@ -23,7 +21,6 @@
             },
             inputs: 0,
             outputs: 1,
-            icon: icon,
             label: function () {
                 return this.name || this.event ? map[this.event] : 'Listen';
             },
@@ -131,7 +128,7 @@
 
 <script>
     import { Input, Select } from 'svelte-integration-red/components';
-    import { nodeColor } from '$editor/lib/constants';
+    import { baseNodeDef } from '$editor/lib/constants';
 
     export let node;
 </script>

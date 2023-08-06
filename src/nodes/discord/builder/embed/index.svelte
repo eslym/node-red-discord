@@ -3,9 +3,8 @@
 
     export function register(render, update, revert) {
         RED.nodes.registerType(__NODE_NAME__, {
+            ...baseNodeDef,
             category: 'discord builder',
-            color: nodeColor,
-            icon: icon,
             defaults: {
                 name: {
                     value: '',
@@ -49,7 +48,7 @@
 <script>
     import { TypedInput } from 'svelte-integration-red/components';
     import EmbedBuilder from '$editor/components/EmbedBuilder.svelte';
-    import { nodeColor } from '$editor/lib/constants';
+    import { baseNodeDef } from '$editor/lib/constants';
 
     export let node;
 </script>

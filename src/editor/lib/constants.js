@@ -1,3 +1,5 @@
+import icon from '$editor/icons/discord.png?red-icon';
+
 export const undefinedType = {
     value: 'undefined',
     icon: 'fa-question',
@@ -20,4 +22,7 @@ export const builderType = {
 
 export const clientNodeContextKey = Symbol('clientNode');
 
-export const nodeColor = '#f2f3f5';
+export const baseNodeDef = {
+    color: '#f2f3f5',
+    icon: icon
+};
