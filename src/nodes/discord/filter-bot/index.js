@@ -1,3 +1,5 @@
+import { Events } from 'discord.js';
+
 /**
  * @param {import('node-red').NodeAPI} RED
  */
@@ -11,17 +13,17 @@ export default function (RED) {
                 const ctx = msg.$dc();
                 let isBot;
                 switch (ctx.event) {
-                    case 'messageCreate':
-                    case 'messageDelete':
-                    case 'messageUpdate':
+                    case Events.MessageCreate:
+                    case Events.MessageDelete:
+                    case Events.MessageUpdate:
                         /** @type {import('discord.js').Message} */
                         const message = ctx.eventArgs[0];
                         isBot = message.author.bot;
                         break;
-                    case 'guildMemberAdd':
-                    case 'guildMemberAvailable':
-                    case 'guildMemberUpdate':
-                    case 'userUpdate':
+                    case Events.GuildMemberAdd:
+                    case Events.GuildMemberAvailable:
+                    case Events.GuildMemberUpdate:
+                    case Events.UserUpdate:
                         /** @type {import('discord.js').GuildMember} */
                         const member = ctx.eventArgs[0];
                         isBot = member.user.bot;

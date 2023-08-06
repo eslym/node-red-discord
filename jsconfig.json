@@ -6,5 +6,5 @@
             "$editor/*": ["./src/editor/*"]
         }
     },
-    "include": ["types.d.ts", "src/**/*"]
+    "include": ["types.d.ts", "src/**/*.js", "src/**/*.svelte"]
 }

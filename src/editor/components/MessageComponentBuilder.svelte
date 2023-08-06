@@ -29,11 +29,13 @@
 
 <Select label="Type" bind:value={component.type}>
     <option value={2}>Button</option>
-    <option value={3} disabled={disableSelect}>Select Menu</option>
-    <option value={5} disabled={disableSelect}>User Select</option>
-    <option value={6} disabled={disableSelect}>Role Select</option>
-    <option value={7} disabled={disableSelect}>Mentionable Select</option>
-    <option value={8} disabled={disableSelect}>Channel Select</option>
+    {#if !disableSelect}
+        <option value={3} disabled={disableSelect}>Select Menu</option>
+        <option value={5} disabled={disableSelect}>User Select</option>
+        <option value={6} disabled={disableSelect}>Role Select</option>
+        <option value={7} disabled={disableSelect}>Mentionable Select</option>
+        <option value={8} disabled={disableSelect}>Channel Select</option>
+    {/if}
 </Select>
 {#if component.type === 2}
     {#if component.style === 5}

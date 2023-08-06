@@ -19,7 +19,7 @@ Integrate discord.js into Node-RED
     -   [ ] edit reply
     -   [ ] delete reply
     -   [ ] update message
-    -   [ ] defer reply
-    -   [ ] defer update
+    -   [x] defer reply
+    -   [x] defer update
     -   [ ] show modal
 -   [ ] Command Builder
