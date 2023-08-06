@@ -1,6 +1,5 @@
 {
-    "name": "@eslym/node-red-discord",
-    "version": "0.0.1-alpha.4",
+    "version": "0.0.1-alpha.5",
     "description": "discord.js for node-red",
     "type": "commonjs",
     "license": "MIT",
@@ -13,17 +12,14 @@
         "url": "https://github.com/eslym/node-red-discord.git"
     },
     "scripts": {
-        "build": "node sirex/build.js",
+        "build": "rollup -c",
+        "build:publish": "rollup -c && cd dist && yarn publish",
         "format": "prettier --write .",
-        "debug": "sirex/build.js && node-red --userDir ./debug",
-        "prepare": "husky install",
-        "build:template": "node sirex/build-template.js"
+        "debug": "rollup -c && node-red --userDir ./.debug",
+        "prepare": "husky install"
     },
     "devDependencies": {
-        "@handlebars/parser": "^2.1.0",
-        "@rollup/plugin-commonjs": "^25.0.3",
-        "@rollup/plugin-node-resolve": "^15.1.0",
-        "@rollup/plugin-replace": "^5.0.2",
+        "@eslym/rs4r": "^1.0.0-beta.1",
         "@types/color": "^3.0.3",
         "@types/node": "^16",
         "@types/node-red": "^1.3.1",
@@ -34,35 +30,14 @@
         "prettier": "^2.8.8",
         "prettier-plugin-svelte": "^2.10.1",
         "pretty-quick": "^3.1.3",
-        "rollup": "^3.27.0",
-        "rollup-plugin-import-css": "^3.3.1",
-        "rollup-plugin-svelte": "^7.1.6",
         "svelte-integration-red": "^1.14.3"
     },
     "dependencies": {
         "discord.js": "^14.11.0",
         "mustache": "^4"
     },
-    "files": [
-        "resources/**/*.js",
-        "resources/**/*.css",
-        "dist/icons/**",
-        "dist/**/*.html",
-        "dist/**/*.js"
-    ],
     "node-red": {
-        "version": ">=3.0",
-        "nodes": {
-            "discord.client": "dist/discord.client.js",
-            "discord.account": "dist/discord.account.js",
-            "discord.event": "dist/discord.event.js",
-            "discord.send": "dist/discord.send.js",
-            "discord.filterBot": "dist/discord.filterBot.js",
-            "discord.builder.message": "dist/builder/discord.builder.message.js",
-            "discord.builder.embed": "dist/builder/discord.builder.embed.js",
-            "discord.builder.component": "dist/builder/discord.builder.component.js",
-            "discord.presence.activity": "dist/discord.presence.activity.js"
-        }
+        "version": ">=3.0"
     },
     "engines": {
         "node": ">=16.9.0"

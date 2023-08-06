@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "$lib/*": ["./src/lib/*"],
+            "$editor/*": ["./src/editor/*"]
+        }
+    },
+    "include": ["types.d.ts", "src/**/*"]
+}
