@@ -37,7 +37,7 @@ export default function (RED) {
                     fetchReply: true
                 });
 
-                getReplies(interaction).push(result);
+                getReplies(interaction).set(result.id, result);
 
                 msg.payload = Flatted.parse(Flatted.stringify(mapInteraction(interaction)));
 

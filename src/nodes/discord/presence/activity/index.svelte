@@ -47,7 +47,7 @@
             label: function () {
                 return this.name || 'Set Presence Activity';
             },
-            paletteLabel: 'Set Presence Activity',
+            paletteLabel: 'Presence Activity',
             oneditprepare: function () {
                 render(this);
             },

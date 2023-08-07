@@ -14,7 +14,7 @@ export function mapInteraction(interaction) {
         user: interaction.user
     };
     if (interaction.isRepliable()) {
-        res.replies = [...getReplies(interaction)];
+        res.replies = [...getReplies(interaction).values()];
     }
     if (interaction.isAnySelectMenu()) {
         res.type = 'select';
@@ -100,7 +100,7 @@ function mapCommandOptions(options) {
 
 export function getReplies(interaction) {
     if (!interactionReplies.has(interaction)) {
-        interactionReplies.set(interaction, []);
+        interactionReplies.set(interaction, new Map());
     }
     return interactionReplies.get(interaction);
 }

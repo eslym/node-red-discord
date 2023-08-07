@@ -15,7 +15,7 @@ Integrate discord.js into Node-RED
 -   [ ] Manage Member Roles
 -   [ ] Interactions
     -   [x] reply
-    -   [ ] followup
+    -   [x] followup
     -   [ ] edit reply
     -   [ ] delete reply
     -   [x] update message

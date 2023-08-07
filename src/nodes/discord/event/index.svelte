@@ -22,9 +22,9 @@
             inputs: 0,
             outputs: 1,
             label: function () {
-                return this.name || (this.event ? map[this.event] : 'Listen');
+                return this.name || (this.event ? `On ${map[this.event]}` : 'Event');
             },
-            paletteLabel: 'Listen',
+            paletteLabel: 'Event',
             oneditprepare: function () {
                 render(this);
             },

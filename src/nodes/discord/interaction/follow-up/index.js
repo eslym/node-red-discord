@@ -1,12 +1,13 @@
-import { getReplies, mapInteraction } from '$lib/interaction';
 import { Events } from 'discord.js';
 import * as Flatted from 'flatted';
+import { evaluatePropOrMessage } from '$lib/builder.js';
+import { getReplies, mapInteraction } from '$lib/interaction';
 
 /**
  * @param {import('node-red').NodeAPI} RED
  */
 export default function (RED) {
-    function DiscordInteractionDeferReplyNode(config) {
+    function DiscordInteractionFollowUpNode(config) {
         RED.nodes.createNode(this, config);
 
         this.on('input', async (msg, send, done) => {
@@ -20,12 +21,24 @@ export default function (RED) {
                 if (!interaction.isRepliable()) {
                     throw new Error('Interaction is not repliable');
                 }
-                const reply = await interaction.deferReply({
+
+                const opts = await evaluatePropOrMessage(
+                    RED,
+                    this,
+                    msg,
+                    config.messageSrc,
+                    config.message,
+                    config.msg
+                );
+
+                const result = await interaction.followUp({
+                    ...opts,
                     ephemeral: config.ephemeral,
                     fetchReply: true
                 });
 
-                getReplies(interaction).set(reply.id, reply);
+                getReplies(interaction).set(result.id, result);
+
                 msg.payload = Flatted.parse(Flatted.stringify(mapInteraction(interaction)));
 
                 send(msg);
@@ -33,7 +46,7 @@ export default function (RED) {
                 this.status({
                     fill: 'green',
                     shape: 'dot',
-                    text: 'sent ' + reply.id
+                    text: 'sent ' + result.id
                 });
 
                 done();
@@ -47,5 +60,5 @@ export default function (RED) {
             }
         });
     }
-    RED.nodes.registerType(__NODE_NAME__, DiscordInteractionDeferReplyNode);
+    RED.nodes.registerType(__NODE_NAME__, DiscordInteractionFollowUpNode);
 }
