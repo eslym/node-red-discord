@@ -25,16 +25,12 @@
                     value: {},
                     required: false
                 },
-                ephemeral: {
-                    value: false,
-                    required: false
-                },
                 _version: {}
             },
             label: function () {
-                return this.name || 'Reply Interaction';
+                return this.name || 'Update Interaction Message';
             },
-            paletteLabel: 'Reply',
+            paletteLabel: 'Update Message',
             inputs: 1,
             outputs: 1,
             oneditprepare: function () {
@@ -58,8 +54,6 @@
 </script>
 
 <Input bind:node prop="name" label="Name" type="text" />
-
-<Input bind:node prop="ephemeral" label="Ephemeral" type="checkbox" />
 
 <TypedInput
     bind:node

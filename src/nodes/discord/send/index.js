@@ -1,7 +1,6 @@
 import * as Flatted from 'flatted';
 import { promisify } from 'util';
-import { evaluateMessage } from '$lib/builder.js';
-import Mustache from 'mustache';
+import { evaluatePropOrMessage } from '$lib/builder.js';
 
 /**
  * @param {import('node-red').NodeAPI} RED
@@ -36,17 +35,6 @@ export default function (RED) {
                     reply = await prop(config.reply, config.replySrc, this, msg);
                 }
 
-                let message;
-
-                if (config.messageSrc === 'builder') {
-                    message = await evaluateMessage(RED, this, msg, config.msg);
-                } else {
-                    message = await prop(config.message, config.messageSrc, this, msg);
-                    if (config.messageSrc === 'str') {
-                        message = Mustache.render(message, msg);
-                    }
-                }
-
                 /** @type {import('discord.js').Client} */
                 let client = config.useMsg ? msg.$dc().client : this.clientNode.discordClient;
 
@@ -56,21 +44,14 @@ export default function (RED) {
                     throw new Error('channel is not a text based channel');
                 }
 
-                /** @type {import('discord.js').MessageCreateOptions} */
-                let opts = {};
-
-                if (typeof message === 'string') {
-                    opts.content = message;
-                } else if (typeof message === 'object') {
-                    opts = {
-                        content: message.content,
-                        tts: message.tts,
-                        nonce: message.nonce,
-                        embeds: message.embeds,
-                        components: message.components,
-                        files: message.files
-                    };
-                }
+                let opts = await evaluatePropOrMessage(
+                    RED,
+                    this,
+                    msg,
+                    config.messageSrc,
+                    config.message,
+                    config.msg
+                );
 
                 if (reply !== undefined) {
                     opts.reply = {

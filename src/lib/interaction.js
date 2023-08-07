@@ -1,3 +1,5 @@
+const interactionReplies = new WeakMap();
+
 /**
  * @param {import('discord.js').Interaction} interaction
  */
@@ -11,6 +13,9 @@ export function mapInteraction(interaction) {
         member: interaction.member,
         user: interaction.user
     };
+    if (interaction.isRepliable()) {
+        res.replies = [...getReplies(interaction)];
+    }
     if (interaction.isAnySelectMenu()) {
         res.type = 'select';
         if (interaction.isUserSelectMenu()) {
@@ -91,4 +96,11 @@ function mapCommandOptions(options) {
             return [option.name, o];
         })
     );
+}
+
+export function getReplies(interaction) {
+    if (!interactionReplies.has(interaction)) {
+        interactionReplies.set(interaction, []);
+    }
+    return interactionReplies.get(interaction);
 }

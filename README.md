@@ -18,7 +18,7 @@ Integrate discord.js into Node-RED
     -   [ ] followup
     -   [ ] edit reply
     -   [ ] delete reply
-    -   [ ] update message
+    -   [x] update message
     -   [x] defer reply
     -   [x] defer update
     -   [ ] show modal

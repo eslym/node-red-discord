@@ -1,4 +1,6 @@
+import { getReplies, mapInteraction } from '$lib/interaction';
 import { Events } from 'discord.js';
+import * as Flatted from 'flatted';
 
 /**
  * @param {import('node-red').NodeAPI} RED
@@ -18,9 +20,12 @@ export default function (RED) {
                 if (!interaction.isRepliable()) {
                     throw new Error('Interaction is not repliable');
                 }
-                await interaction.deferReply({
-                    ephemeral: config.ephemeral
+                const reply = await interaction.deferReply({
+                    ephemeral: config.ephemeral,
+                    fetchReply: true
                 });
+                getReplies(interaction).push(reply);
+                msg.payload = Flatted.parse(Flatted.stringify(mapInteraction(reply)));
                 send(msg);
                 done();
             } catch (err) {

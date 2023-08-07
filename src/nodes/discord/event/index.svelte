@@ -22,7 +22,7 @@
             inputs: 0,
             outputs: 1,
             label: function () {
-                return this.name || this.event ? map[this.event] : 'Listen';
+                return this.name || (this.event ? map[this.event] : 'Listen');
             },
             paletteLabel: 'Listen',
             oneditprepare: function () {

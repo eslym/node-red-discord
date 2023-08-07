@@ -6,6 +6,41 @@ import { ButtonStyle, ComponentType } from 'discord.js';
 /**
  * @param {import('node-red').NodeAPI} RED
  * @param {import('node-red').Node} node
+ * @param {string} propType
+ * @param {*} propVal
+ * @param {import('node-red').NodeMessage} msg
+ * @param {object} message
+ * @returns {Promise<import('discord.js').MessageCreateOptions>|string}
+ */
+export async function evaluatePropOrMessage(RED, node, msg, propType, propVal, message) {
+    if (propType === 'builder') {
+        return evaluateMessage(RED, node, msg, message);
+    }
+    const prop = promisify(RED.util.evaluateNodeProperty);
+    const m = await prop(propVal, propType, node, msg);
+    if (propType === 'str') {
+        return {
+            content: Mustache.render(m, msg)
+        };
+    }
+    if (typeof m === 'string') {
+        return {
+            content: m
+        };
+    }
+    return {
+        content: m.content,
+        tts: m.tts,
+        nonce: m.nonce,
+        embeds: m.embeds,
+        components: m.components,
+        files: m.files
+    };
+}
+
+/**
+ * @param {import('node-red').NodeAPI} RED
+ * @param {import('node-red').Node} node
  * @param {import('node-red').NodeMessage} msg
  * @param {object} message
  * @returns {Promise<import('discord.js').MessageCreateOptions>}

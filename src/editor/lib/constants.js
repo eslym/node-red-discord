@@ -23,6 +23,9 @@ export const builderType = {
 export const clientNodeContextKey = Symbol('clientNode');
 
 export const baseNodeDef = {
-    color: '#f2f3f5',
-    icon: icon
+    color: '#e4e7e9',
+    icon: icon,
+    labelStyle() {
+        return this.name ? 'node_label_italic' : '';
+    }
 };
