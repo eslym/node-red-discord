@@ -13,7 +13,7 @@ Integrate discord.js into Node-RED
     -   [ ] Attachment Builder
     -   [ ] Validations
 -   [ ] Manage Member Roles
--   [ ] Interactions
+-   [x] Interactions
     -   [x] reply
     -   [x] followup
     -   [ ] edit reply
