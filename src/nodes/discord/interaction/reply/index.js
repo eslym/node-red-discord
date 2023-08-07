@@ -1,3 +1,4 @@
+import { Events } from 'discord.js';
 import * as Flatted from 'flatted';
 import { promisify } from 'util';
 import { evaluateMessage } from '$lib/builder.js';
@@ -8,32 +9,20 @@ import Mustache from 'mustache';
  */
 export default function (RED) {
     const prop = promisify(RED.util.evaluateNodeProperty);
-    function DiscordSendNode(config) {
-        RED.nodes.createNode(this, config);
-        this.name = config.name;
 
-        if (!config.useMsg) {
-            if (!config.client) {
-                this.status({
-                    fill: 'red',
-                    shape: 'dot',
-                    text: 'no client'
-                });
-                return;
-            }
-            /** @type {DiscordClientNode} node */
-            let node = RED.nodes.getNode(config.client);
-            this.clientNode = node;
-        }
+    function DiscordInteractionReplyNode(config) {
+        RED.nodes.createNode(this, config);
 
         this.on('input', async (msg, send, done) => {
             try {
-                let channel = await prop(config.channel, config.channelSrc, this, msg);
-
-                let reply = undefined;
-
-                if (config.replySrc !== 'none') {
-                    reply = await prop(config.reply, config.replySrc, this, msg);
+                const ctx = msg.$dc();
+                if (ctx.event !== Events.InteractionCreate) {
+                    throw new Error('Input is not from a discord interaction event');
+                }
+                /** @type {import('discord.js').Interaction} */
+                const interaction = ctx.eventArgs[0];
+                if (!interaction.isRepliable()) {
+                    throw new Error('Interaction is not repliable');
                 }
 
                 let message;
@@ -45,15 +34,6 @@ export default function (RED) {
                     if (config.messageSrc === 'str') {
                         message = Mustache.render(message, msg);
                     }
-                }
-
-                /** @type {import('discord.js').Client} */
-                let client = config.useMsg ? msg.$dc().client : this.clientNode.discordClient;
-
-                let ch = await client.channels.fetch(channel);
-
-                if (!ch.isTextBased()) {
-                    throw new Error('channel is not a text based channel');
                 }
 
                 /** @type {import('discord.js').MessageCreateOptions} */
@@ -72,13 +52,11 @@ export default function (RED) {
                     };
                 }
 
-                if (reply !== undefined) {
-                    opts.reply = {
-                        messageReference: reply
-                    };
-                }
-
-                let result = await ch.send(opts);
+                const result = await interaction.reply({
+                    ...opts,
+                    ephemeral: config.ephemeral,
+                    fetchReply: true
+                });
 
                 msg.payload = Flatted.parse(Flatted.stringify(result));
 
@@ -97,9 +75,9 @@ export default function (RED) {
                     shape: 'dot',
                     text: 'error'
                 });
-                done(err);
+                return done(err);
             }
         });
     }
-    RED.nodes.registerType(__NODE_NAME__, DiscordSendNode);
+    RED.nodes.registerType(__NODE_NAME__, DiscordInteractionReplyNode);
 }

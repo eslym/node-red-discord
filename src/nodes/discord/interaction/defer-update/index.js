@@ -15,6 +15,9 @@ export default function (RED) {
                 }
                 /** @type {import('discord.js').Interaction} */
                 const interaction = ctx.eventArgs[0];
+                if (!interaction.isModalSubmit() && !interaction.isMessageComponent()) {
+                    throw new Error('Interaction is not updateable');
+                }
                 await interaction.deferUpdate();
                 send(msg);
                 done();

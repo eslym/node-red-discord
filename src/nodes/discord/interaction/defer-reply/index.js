@@ -15,6 +15,9 @@ export default function (RED) {
                 }
                 /** @type {import('discord.js').Interaction} */
                 const interaction = ctx.eventArgs[0];
+                if (!interaction.isRepliable()) {
+                    throw new Error('Interaction is not repliable');
+                }
                 await interaction.deferReply({
                     ephemeral: config.ephemeral
                 });

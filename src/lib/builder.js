@@ -67,7 +67,7 @@ export async function evaluateEmbed(RED, node, msg, embed) {
             embed.fields.map((field) => evaluateField(RED, node, msg, field))
         );
     }
-    if (embed.timestamp) {
+    if (embed.timestamp && embed.timestamp.type !== 'undefined') {
         result.timestamp = dateVal(
             await prop(embed.timestamp.value, embed.timestamp.type, node, msg)
         );
@@ -173,10 +173,10 @@ async function evaluateImage(RED, node, msg, image) {
     const result = {
         url: Mustache.render(image.url, msg)
     };
-    if (image.width) {
+    if (image.width && image.width.type !== 'undefined') {
         result.width = await prop(image.width.value, image.width.type, node, msg);
     }
-    if (image.height) {
+    if (image.height && image.height.type !== 'undefined') {
         result.height = await prop(image.height.value, image.height.type, node, msg);
     }
     return result;
