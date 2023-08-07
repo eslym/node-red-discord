@@ -1,1 +1,1 @@
-Reply to an interaction.
+Edit interaction reply message.

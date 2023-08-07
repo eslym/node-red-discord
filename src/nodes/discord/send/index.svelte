@@ -11,7 +11,7 @@
     export function register(render, update, revert) {
         RED.nodes.registerType(__NODE_NAME__, {
             ...baseNodeDef,
-            category: 'discord general',
+            category: 'discord message',
             defaults: {
                 name: {
                     value: '',
@@ -62,7 +62,7 @@
                 _version: {}
             },
             label: function () {
-                return this.name || 'Send';
+                return this.name || 'Send Message';
             },
             paletteLabel: 'Send',
             inputs: 1,

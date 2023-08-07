@@ -6,20 +6,33 @@ Integrate discord.js into Node-RED
 
 ## Todo
 
--   [x] Send discord messages
 -   [x] Message builder
     -   [x] Embed Builder
     -   [x] Component Builder
     -   [ ] Attachment Builder
     -   [ ] Validations
--   [ ] Manage Member Roles
+-   [ ] Message
+    -   [x] Send Messge
+    -   [ ] Edit Message
+    -   [ ] Delete Message
+-   [ ] Guild Member
+    -   [ ] Get Member
+    -   [ ] Ban Member
+    -   [ ] Kick Member
+    -   [ ] Manage Roles
+        -   [ ] Add Role
+        -   [ ] Remove Role
+    -   [ ] Manage Nickname
 -   [x] Interactions
     -   [x] reply
     -   [x] followup
-    -   [ ] edit reply
-    -   [ ] delete reply
+    -   [x] edit reply
+    -   [x] delete reply
     -   [x] update message
     -   [x] defer reply
     -   [x] defer update
     -   [ ] show modal
--   [ ] Command Builder
+-   [ ] Application Commands
+    -   [ ] Command Builder
+    -   [ ] Guild Commands
+    -   [ ] Global Commands
