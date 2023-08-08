@@ -1,6 +1,7 @@
 import * as dcjs from 'discord.js';
 import * as Flatted from 'flatted';
 import { mapInteraction } from '$lib/interaction';
+import { craftDiscordContext, craftReadyPayload } from '$lib/utils';
 
 /**
  * @param {import('node-red').NodeAPI} RED
@@ -27,10 +28,10 @@ export default function (RED) {
                 text: 'failed'
             });
         };
+        /** @type {import('discord.js').Client} */
+        const client = this.clientNode.getDiscordClient();
         let eventHandler = (...args) => {
-            let context = Object.freeze({
-                $lib: dcjs,
-                client: this.clientNode.getDiscordClient(),
+            let context = craftDiscordContext(client, {
                 event: this.event,
                 eventArgs: Object.freeze([...args])
             });
@@ -41,10 +42,10 @@ export default function (RED) {
                 payload: args
             };
             switch (this.event) {
-                case 'ready':
-                    msg.payload = args[0].readyTimestamp;
+                case dcjs.Events.ClientReady:
+                    msg.payload = craftReadyPayload(client);
                     break;
-                case 'interactionCreate':
+                case dcjs.Events.InteractionCreate:
                     msg.payload = Flatted.parse(Flatted.stringify(mapInteraction(args[0])));
                     break;
                 default:
@@ -73,5 +74,6 @@ export default function (RED) {
             done();
         });
     }
+
     RED.nodes.registerType(__NODE_NAME__, DiscordEventNode);
 }

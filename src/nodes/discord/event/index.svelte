@@ -129,6 +129,7 @@
 <script>
     import { Input, Select } from 'svelte-integration-red/components';
     import { baseNodeDef } from '$editor/lib/constants';
+    import { fetchWithCreds } from '$editor/lib/fetch';
 
     export let node;
 </script>
