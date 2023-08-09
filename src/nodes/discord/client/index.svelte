@@ -71,14 +71,27 @@
 
 <script>
     import { Input, ToggleGroup, Collapsible, Button } from 'svelte-integration-red/components';
-    import InviteBotPopup from '$editor/components/InviteBotPopup.svelte';
+    import InviteBotTray from '$editor/tray/InviteBotTray.svelte';
     import { fetchWithCreds as fetch } from '$editor/lib/fetch.js';
+    import { openTray } from '$editor/lib/tray';
 
     export let node;
 
     let applicationId = undefined;
 
-    let invitePopup = false;
+    const openInvite = () => {
+        openTray(InviteBotTray, {
+            title: 'Invite Bot',
+            value: applicationId,
+            buttons: [
+                {
+                    id: 'node-dialog-back',
+                    text: RED._('common.label.back')
+                }
+            ],
+            width: '500px'
+        });
+    };
 
     (async () => {
         let res = await fetch(`/discord/${node.id}`);
@@ -92,8 +105,7 @@
     <Input bind:node type="text" prop="name" label="Name" />
     <Input bind:node type="password" prop="token" label="Token" credentials />
     {#if applicationId}
-        <Button label="Invite Bot" on:click={() => (invitePopup = true)} />
-        <InviteBotPopup bind:showPopup={invitePopup} bind:applicationId />
+        <Button label="Invite Bot" on:click={openInvite} />
     {/if}
     <Collapsible collapsed label="Intents">
         <ToggleGroup

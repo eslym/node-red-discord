@@ -83,17 +83,21 @@
 </div>
 
 <style>
-    label {
-        font-size: 0.75em;
-    }
     .container {
         display: flex;
         flex-direction: row;
-        gap: 5px;
+        gap: 10px;
     }
     .category {
         flex-grow: 1;
         display: flex;
         flex-direction: column;
+        gap: 5px;
+    }
+    strong {
+        margin-bottom: 5px;
+    }
+    input[type='checkbox'] {
+        margin: 0;
     }
 </style>
