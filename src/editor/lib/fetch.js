@@ -1,3 +1,8 @@
+/**
+ * @param {string|URL} url
+ * @param {RequestInit|undefined} options
+ * @returns {Promise<Response>}
+ */
 export function fetchWithCreds(url, options) {
     const creds = localStorage.getItem('auth-tokens');
     if (creds) {

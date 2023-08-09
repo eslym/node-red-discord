@@ -13,13 +13,24 @@
     import { Button, Collapsible } from 'svelte-integration-red/components';
     import EmbedBuilder, { newRecord as newEmbed } from './EmbedBuilder.svelte';
     import ActionRowBuilder, { newComponent } from './ActionRowBuilder.svelte';
-    import SearchEmojiPopup from './SearchEmojiPopup.svelte';
     import EditList from './EditList.svelte';
+    import { emojiTray } from '$editor/lib/tray';
+    import { formatEmoji } from '$editor/lib/utils';
 
     export let msg;
 
     let ta;
-    let showEmoji = false;
+
+    const openTray = emojiTray();
+
+    function insertEmoji() {
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        openTray().then((emoji) => {
+            if (!emoji) return;
+            msg.content = msg.content.slice(0, start) + formatEmoji(emoji) + msg.content.slice(end);
+        });
+    }
 
     $: if (typeof msg === 'string') {
         msg = {
@@ -35,21 +46,7 @@
 
 <Collapsible label="Content">
     <textarea bind:this={ta} bind:value={msg.content} style="width: 100%;" />
-    <Button small inline icon="smile-o" label="Insert Emoji" on:click={() => (showEmoji = true)} />
-    <SearchEmojiPopup
-        bind:showPopup={showEmoji}
-        on:select={(e) => {
-            let emoji = e.detail;
-            let emojiFormat = `<${emoji.animated ? 'a' : ''}:${e.detail.name}:${e.detail.id}>`;
-            let newEnd = ta.selectionEnd + emojiFormat.length;
-            msg.content =
-                msg.content.slice(0, ta.selectionStart) +
-                emojiFormat +
-                msg.content.slice(ta.selectionEnd);
-            ta.selectionStart = newEnd;
-            ta.selectionEnd = newEnd;
-        }}
-    />
+    <Button small inline icon="smile-o" label="Insert Emoji" on:click={insertEmoji} />
 </Collapsible>
 <Collapsible label="Embeds ({msg.embeds?.length ?? 0})" collapsed>
     <Button

@@ -21,40 +21,34 @@
     $: url = buildUrl(value, commands, permissions);
 </script>
 
-<div class="container">
-    <PermissionsCalculator bind:permissions />
-    <p>
-        <label>
-            <input type="checkbox" bind:checked={commands} />
-            Application Commands
-        </label>
-    </p>
-    <p>
-        <label class="url">
-            <span>Invite Link:</span>
-            <input
-                type="url"
-                value={url}
-                on:focus|preventDefault={selectAll}
-                on:mousedown|preventDefault={selectAll}
-                on:keydown={(ev) => {
-                    if (ev.key === 'Enter' || ev.key === 'Tab') {
-                        return;
-                    }
-                    ev.preventDefault();
-                    ev.target.select();
-                }}
-            />
-        </label>
-    </p>
-</div>
+<PermissionsCalculator bind:permissions />
+<p>
+    <label>
+        <input type="checkbox" bind:checked={commands} />
+        Application Commands
+    </label>
+</p>
+<p>
+    <label class="url">
+        <span>Invite Link:</span>
+        <input
+            type="url"
+            value={url}
+            on:focus|preventDefault={selectAll}
+            on:mousedown|preventDefault={selectAll}
+            on:keydown={(ev) => {
+                if (ev.key === 'Enter' || ev.key === 'Tab') {
+                    return;
+                }
+                ev.preventDefault();
+                ev.target.select();
+            }}
+        />
+    </label>
+</p>
 
 <style>
-    .container {
-        padding: 1em;
-    }
-
-    .container > * {
+    p {
         margin: 1.5em 0;
     }
 

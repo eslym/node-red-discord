@@ -4,8 +4,11 @@
     import { Row, Button } from 'svelte-integration-red/components';
     import TypedInput from './TypedInput.svelte';
     import { undefinedType, clientNodeContextKey } from '../lib/constants';
-    import SearchEmojiPopup from './SearchEmojiPopup.svelte';
     import { fetchWithCreds as fetch } from '../lib/fetch.js';
+    import { emojiTray } from '$editor/lib/tray';
+    import { formatEmoji } from '$editor/lib/utils';
+
+    const searchEmoji = emojiTray();
 
     const unicodeType = {
         value: 'unicode',
@@ -29,9 +32,12 @@
     /** @type {import('svelte/store').Readable<string>} */
     let clientNode = getContext(clientNodeContextKey) ?? writable(undefined);
 
-    let showPopup = false;
+    const testEmoji = /^<(a)?:([a-zA-Z0-9_]{2,}):(\d+)>$/;
 
-    async function getEmoji(id) {
+    /** @param {string} emoji */
+    async function getEmoji(emoji) {
+        if (!emoji || !testEmoji.test(emoji)) return null;
+        let id = emoji.match(testEmoji)[3];
         let res = await fetch(`/discord/${$clientNode}/emojis/${id}`);
         if (!res.ok) return null;
         return res.json();
@@ -53,18 +59,14 @@
             {/if}
         {/await}
     {/if}
-</Row>
-
-{#if emoji.type === 'guild'}
-    <Row>
-        <Button label="Search Emoji" icon="search" on:click={() => (showPopup = true)} />
-        <SearchEmojiPopup
-            small
+    {#if emoji.type === 'guild'}
+        <Button
             icon="search"
-            bind:showPopup
-            on:select={(e) => {
-                emoji.value = e.detail.id;
+            on:click={() => {
+                searchEmoji().then((res) => {
+                    if (res) emoji.value = formatEmoji(res);
+                });
             }}
         />
-    </Row>
-{/if}
+    {/if}
+</Row>

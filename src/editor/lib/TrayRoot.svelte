@@ -1,6 +1,15 @@
 <script>
     export let data;
+    export let props = {};
     export let component;
 </script>
 
-<svelte:component this={component} bind:value={$data} />
+<div>
+    <svelte:component this={component} bind:value={$data} {...props} />
+</div>
+
+<style>
+    div {
+        padding: 1em;
+    }
+</style>

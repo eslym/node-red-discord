@@ -92,12 +92,21 @@
 
     setContext(clientNodeContextKey, clientNode);
 
-    $: $clientNode = node.client;
+    $: clientNode.set(node.useMsg ? '' : node.client);
+
+    $: if (node.useMsg) node.client = '';
 </script>
 
 <Input bind:node prop="name" label="Name" type="text" />
-<Input bind:node prop="client" type="config" label="Client" bind:disabled={node.useMsg} />
-<Input bind:node prop="useMsg" label="Same client as input Message" />
+<Input
+    bind:node
+    prop="client"
+    type="config"
+    label="Client"
+    bind:disabled={node.useMsg}
+    bind:value={node.client}
+/>
+<Input bind:node prop="useMsg" label="Same client as input Message" bind:value={node.useMsg} />
 <TypedInput
     bind:node
     prop="channel"
