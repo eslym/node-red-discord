@@ -20,13 +20,27 @@
     }
 </script>
 
-{#if clientNode}
-    <SearchEmoji {clientNode} on:select={onSelect} />
-{:else}
-    <Select label="Search from" bind:value={localClient}>
-        {#each availableNodes as node}
-            <option value={node.id}>{node.name || node.id}</option>
-        {/each}
-    </Select>
-    <SearchEmoji bind:clientNode={localClient} on:select={onSelect} />
-{/if}
+<div>
+    {#if clientNode}
+        <SearchEmoji {clientNode} on:select={onSelect} />
+    {:else}
+        <Select label="Search from" bind:value={localClient}>
+            {#each availableNodes as node}
+                <option value={node.id}>{node.name || node.id}</option>
+            {/each}
+        </Select>
+        <SearchEmoji bind:clientNode={localClient} on:select={onSelect} />
+    {/if}
+</div>
+
+<style>
+    div {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    div :global(.emoji-container) {
+        flex-grow: 1;
+    }
+</style>

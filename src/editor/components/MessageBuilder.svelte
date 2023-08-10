@@ -14,21 +14,27 @@
     import EmbedBuilder, { newRecord as newEmbed } from './EmbedBuilder.svelte';
     import ActionRowBuilder, { newComponent } from './ActionRowBuilder.svelte';
     import EditList from './EditList.svelte';
+    import MarkdownEditor from './MarkdownEditor.svelte';
     import { emojiTray } from '$editor/lib/tray';
     import { formatEmoji } from '$editor/lib/utils';
 
     export let msg;
 
-    let ta;
+    /** @type {AceAjax.Editor} */
+    let editor;
+    /** @type {AceAjax.IEditSession} */
+    let editorSession;
 
     const openTray = emojiTray();
 
     function insertEmoji() {
-        const start = ta.selectionStart;
-        const end = ta.selectionEnd;
+        const selection = editor.selection.getRange();
         openTray().then((emoji) => {
+            editor.focus();
             if (!emoji) return;
-            msg.content = msg.content.slice(0, start) + formatEmoji(emoji) + msg.content.slice(end);
+            const text = formatEmoji(emoji);
+            editorSession.replace(selection, text);
+            editor.gotoLine(selection.start.row, selection.start.column + text.length);
         });
     }
 
@@ -45,7 +51,7 @@
 </script>
 
 <Collapsible label="Content">
-    <textarea bind:this={ta} bind:value={msg.content} style="width: 100%;" />
+    <MarkdownEditor bind:value={msg.content} bind:session={editorSession} bind:editor />
     <Button small inline icon="smile-o" label="Insert Emoji" on:click={insertEmoji} />
 </Collapsible>
 <Collapsible label="Embeds ({msg.embeds?.length ?? 0})" collapsed>

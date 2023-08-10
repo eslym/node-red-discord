@@ -11,5 +11,6 @@
 <style>
     div {
         padding: 1em;
+        height: 100%;
     }
 </style>

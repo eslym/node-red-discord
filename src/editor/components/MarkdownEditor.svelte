@@ -5,8 +5,19 @@
     export let session = undefined;
 
     /** @type {AceAjax.Editor} */
-    let editor;
+    export let editor;
+
+    /** @type {HTMLDivElement} */
     let container;
+
+    let _height = 0;
+    let _width = 0;
+
+    $: if (editor && (_height || _width)) {
+        container.style.width = `${_width}px`;
+        container.style.height = `${_height - 10}px`;
+        editor.resize();
+    }
 
     $: if (editor && editor.getValue() !== value) {
         editor.setValue(value);
@@ -16,16 +27,18 @@
         editor = RED.editor.createEditor({
             element: container,
             mode: 'ace/mode/markdown',
-            value
+            expandable: false,
+            useWrapMode: true,
+            wordWrap: 'on',
+            value: value
         });
-        editor.onDocumentChange(() => {
-            value = editor.getValue();
+        session = editor.getSession();
+        editor.on('change', () => {
+            if (value !== editor.getValue()) {
+                value = editor.getValue();
+            }
         });
-        if (session) {
-            editor.setSession(session);
-        } else {
-            session = editor.getSession();
-        }
+        editor.resize();
     });
 
     onDestroy(() => {
@@ -33,11 +46,20 @@
     });
 </script>
 
-<div bind:this={container} class="node-text-editor" />
+<div class="wrapper" bind:clientHeight={_height} bind:clientWidth={_width}>
+    <div bind:this={container} class="node-text-editor" />
+</div>
 
 <style>
-    div {
+    div.node-text-editor {
+        width: 100%;
+    }
+    div.wrapper {
         height: var(--editor-height, 250px);
+        width: 100%;
         min-height: var(--editor-min-height, 250px);
+        resize: var(--editor-resize, vertical);
+        overflow: hidden;
+        padding-bottom: 10px;
     }
 </style>

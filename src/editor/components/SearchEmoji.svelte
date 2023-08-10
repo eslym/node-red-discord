@@ -43,7 +43,7 @@
 </script>
 
 <Input label="Searh" bind:value={keyword} />
-<div class="container">
+<div class="emoji-container">
     {#each filteredEmojis as guild (guild.id)}
         <Collapsible label={guild.name}>
             <svelte:fragment slot="header">
@@ -70,7 +70,7 @@
 </div>
 
 <style>
-    .container {
+    .emoji-container {
         overflow-y: auto;
         padding: 5px;
     }
