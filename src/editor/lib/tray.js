@@ -1,62 +1,9 @@
-import { writable, get } from 'svelte/store';
 import { getContext } from 'svelte';
-import TrayRoot from './TrayRoot.svelte';
+import { get } from 'svelte/store';
 import { fetchWithCreds } from './fetch';
 import SearchEmojiTray from '$editor/tray/SearchEmojiTray.svelte';
 import { clientNodeContextKey } from './constants';
-import { name as packageName } from '$package.json';
-
-export function openTray(component, options) {
-    const dataStore = writable(options.value);
-
-    let instance;
-
-    const opts = {
-        title: options.title,
-        focusElement: options.focusElement,
-        width: options.width || 'inherit',
-        maximized: options.maximized || false,
-        buttons: (options.buttons || []).map((btn) => ({
-            ...btn,
-            click() {
-                if (btn.click) btn.click.call(this, get(dataStore));
-                RED.tray.close();
-            }
-        })),
-        resize() {},
-        open(tray) {
-            const target = tray.find('.red-ui-tray-body')[0];
-            instance = new TrayRoot({
-                target,
-                props: {
-                    data: dataStore,
-                    props: options.props || {},
-                    component
-                }
-            });
-        },
-        close() {
-            instance.$destroy();
-        },
-        show() {}
-    };
-
-    RED.tray.show(opts);
-}
-
-RED.editor.registerTypeEditor(packageName, {
-    show(options) {
-        RED.view.state(RED.state.EDITING);
-        openTray(options.component, options);
-    }
-});
-
-export function openTypeEditor(component, options) {
-    RED.editor.showTypeEditor(packageName, {
-        ...options,
-        component
-    });
-}
+import { openTypeEditor } from '@eslym/rs4r/tray';
 
 export function emojiTray() {
     const store = getContext(clientNodeContextKey);
@@ -72,6 +19,7 @@ export function emojiTray() {
                             id: 'node-cancel',
                             text: RED._('common.label.cancel'),
                             click: function () {
+                                RED.tray.close();
                                 res();
                             }
                         }
@@ -92,6 +40,7 @@ export function emojiTray() {
                         id: 'node-cancel',
                         text: RED._('common.label.cancel'),
                         click: function () {
+                            RED.tray.close();
                             res();
                         }
                     }

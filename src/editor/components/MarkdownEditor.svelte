@@ -2,10 +2,11 @@
     import { onMount, onDestroy } from 'svelte';
 
     export let value;
-    export let session = undefined;
 
     /** @type {AceAjax.Editor} */
     export let editor;
+
+    export let resizable = true;
 
     /** @type {HTMLDivElement} */
     let container;
@@ -15,7 +16,7 @@
 
     $: if (editor && (_height || _width)) {
         container.style.width = `${_width}px`;
-        container.style.height = `${_height - 10}px`;
+        container.style.height = resizable ? `${_height - 10}px` : `${_height}px`;
         editor.resize();
     }
 
@@ -32,7 +33,6 @@
             wordWrap: 'on',
             value: value
         });
-        session = editor.getSession();
         editor.on('change', () => {
             if (value !== editor.getValue()) {
                 value = editor.getValue();
@@ -46,7 +46,12 @@
     });
 </script>
 
-<div class="wrapper" bind:clientHeight={_height} bind:clientWidth={_width}>
+<div
+    class="wrapper"
+    style={resizable ? 'padding-bottom:10px;resize:vertical;' : ''}
+    bind:clientHeight={_height}
+    bind:clientWidth={_width}
+>
     <div bind:this={container} class="node-text-editor" />
 </div>
 
@@ -58,8 +63,6 @@
         height: var(--editor-height, 250px);
         width: 100%;
         min-height: var(--editor-min-height, 250px);
-        resize: var(--editor-resize, vertical);
         overflow: hidden;
-        padding-bottom: 10px;
     }
 </style>

@@ -1,10 +1,10 @@
 <script>
     import PermissionsCalculator from '../components/PermissionsCalculator.svelte';
 
-    export let value;
+    export let applicationId;
 
-    let permissions = 0;
-    let commands = false;
+    export let permissions = 0;
+    export let commands = false;
 
     function buildUrl(id, cmd, perms) {
         let url = new URL('https://discord.com/oauth2/authorize');
@@ -18,7 +18,7 @@
         ev.target.select();
     }
 
-    $: url = buildUrl(value, commands, permissions);
+    $: url = buildUrl(applicationId, commands, permissions);
 </script>
 
 <PermissionsCalculator bind:permissions />

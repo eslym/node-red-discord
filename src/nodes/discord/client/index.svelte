@@ -13,6 +13,12 @@
                 partials: {
                     value: []
                 },
+                invites: {
+                    value: {
+                        permissions: '0',
+                        commands: false
+                    }
+                },
                 _version: {}
             },
             credentials: {
@@ -73,20 +79,34 @@
     import { Input, ToggleGroup, Collapsible, Button } from 'svelte-integration-red/components';
     import InviteBotTray from '$editor/tray/InviteBotTray.svelte';
     import { fetchWithCreds as fetch } from '$editor/lib/fetch.js';
-    import { openTray } from '$editor/lib/tray';
+    import { openTray } from '@eslym/rs4r/tray';
 
     export let node;
 
     let applicationId = undefined;
 
     const openInvite = () => {
+        if (!node.invites) {
+            node.invites = {
+                permissions: '0',
+                commands: false
+            };
+        }
         openTray(InviteBotTray, {
             title: 'Invite Bot',
             value: applicationId,
+            props: node.invites,
+            binding: {
+                permissions: (v) => (node.invites.permissions = v),
+                commands: (v) => (node.invites.commands = v)
+            },
             buttons: [
                 {
                     id: 'node-dialog-back',
-                    text: RED._('common.label.back')
+                    text: RED._('common.label.back'),
+                    click() {
+                        RED.tray.close();
+                    }
                 }
             ],
             width: '500px'

@@ -1,17 +1,16 @@
-import { EditorRED } from 'node-red';
-import { JSONSchemaForNPMPackageJsonFiles } from '@schemastore/package';
-
-declare global {
-    const RED: EditorRED;
-    const __NODE_NAME__: string;
-}
-
 declare module '*?red-icon' {
     const icon: string;
     export default icon;
 }
 
+declare module '*?red-res' {
+    const path: string;
+    export default path;
+}
+
 declare module '$package.json' {
+    import { JSONSchemaForNPMPackageJsonFiles } from '@schemastore/package';
+
     export const name: JSONSchemaForNPMPackageJsonFiles['name'];
     export const version: JSONSchemaForNPMPackageJsonFiles['version'];
     export const description: JSONSchemaForNPMPackageJsonFiles['description'];

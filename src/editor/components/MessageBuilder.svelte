@@ -33,7 +33,7 @@
             editor.focus();
             if (!emoji) return;
             const text = formatEmoji(emoji);
-            editorSession.replace(selection, text);
+            editor.getSession().replace(selection, text);
             editor.gotoLine(selection.start.row, selection.start.column + text.length);
         });
     }

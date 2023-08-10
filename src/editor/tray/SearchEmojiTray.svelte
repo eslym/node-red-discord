@@ -2,7 +2,6 @@
     import { Select } from 'svelte-integration-red/components';
     import SearchEmoji from '$editor/components/SearchEmoji.svelte';
 
-    export let value;
     export let clientNode;
     export let availableNodes = [];
     export let resolve;
