@@ -1,0 +1,86 @@
+[
+    {
+        "id": "c8bc9b493992ca19",
+        "type": "discord.send",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "useMsg": true,
+        "client": "",
+        "channelSrc": "str",
+        "channel": "773480124019900426",
+        "replySrc": "msg",
+        "reply": "payload.id",
+        "messageSrc": "str",
+        "message": "# Aww Man!!",
+        "msg": {},
+        "_version": "0.0.1-alpha.11",
+        "x": 820,
+        "y": 200,
+        "wires": [[]]
+    },
+    {
+        "id": "8272884bf1a0dcd2",
+        "type": "discord.event",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "client": "",
+        "event": "messageCreate",
+        "_version": "0.0.1-alpha.11",
+        "x": 110,
+        "y": 200,
+        "wires": [["9a06aaf92e8e649c"]]
+    },
+    {
+        "id": "9a06aaf92e8e649c",
+        "type": "discord.filter-bot",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "outputs": 1,
+        "x": 290,
+        "y": 200,
+        "wires": [["4e6173c23a80d036"]]
+    },
+    {
+        "id": "4e6173c23a80d036",
+        "type": "switch",
+        "z": "f6f2187d.f17ca8",
+        "name": "Filter Channel",
+        "property": "payload.channelId",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "773480124019900426",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 460,
+        "y": 200,
+        "wires": [["adab01d5b74569e9"]],
+        "outputLabels": ["Bot Playground"]
+    },
+    {
+        "id": "adab01d5b74569e9",
+        "type": "switch",
+        "z": "f6f2187d.f17ca8",
+        "name": "Filter Message",
+        "property": "payload.content",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "creeper?",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 640,
+        "y": 200,
+        "wires": [["c8bc9b493992ca19"]]
+    }
+]
