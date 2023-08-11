@@ -28,8 +28,7 @@
                 channelSrc: {
                     value: 'msg',
                     required: true,
-                    types: ['msg', 'flow', 'global', 'env', 'str'],
-                    validate: RED.validators.typedInput('channelSrc')
+                    types: ['msg', 'flow', 'global', 'env', 'str']
                 },
                 channel: {
                     value: 'payload.channelId',
@@ -38,8 +37,7 @@
                 replySrc: {
                     value: 'none',
                     required: true,
-                    types: [noneType, 'msg', 'flow', 'global', 'env', 'str'],
-                    validate: RED.validators.typedInput('replySrc')
+                    types: [noneType, 'msg', 'flow', 'global', 'env', 'str']
                 },
                 reply: {
                     value: 'payload.id',
@@ -48,8 +46,7 @@
                 messageSrc: {
                     value: 'msg',
                     required: true,
-                    types: messageTypes,
-                    validate: RED.validators.typedInput('messageSrc')
+                    types: messageTypes
                 },
                 message: {
                     value: 'payload.content',

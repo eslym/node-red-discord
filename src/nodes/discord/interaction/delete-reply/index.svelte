@@ -15,8 +15,7 @@
                 replySrc: {
                     value: 'str',
                     required: true,
-                    types: ['str', 'msg'],
-                    validate: RED.validators.typedInput('replySrc')
+                    types: ['str', 'msg']
                 },
                 reply: {
                     value: '@original'

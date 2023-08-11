@@ -127,16 +127,14 @@
 </script>
 
 <script>
-    import { Input, Select } from 'svelte-integration-red/components';
     import { baseNodeDef } from '$editor/lib/constants';
-    import { fetchWithCreds } from '$editor/lib/fetch';
-
-    export let node;
+    import Input from '$editor/red/Input.svelte';
 </script>
 
-<Input bind:node prop="name" label="Name" type="text" />
-<Input bind:node prop="client" label="Client" type="config" />
-<Select bind:node prop="event" label="Event">
+<Input prop="name" label="Name" type="text" />
+<Input prop="client" label="Client" />
+
+<Input prop="event" label="Event" type="select">
     <option value={undefined} style="display: none;">Select an event</option>
     {#each Object.keys(events) as category}
         <optgroup label={category}>
@@ -145,4 +143,4 @@
             {/each}
         </optgroup>
     {/each}
-</Select>
+</Input>

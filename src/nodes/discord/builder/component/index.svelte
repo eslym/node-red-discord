@@ -11,8 +11,7 @@
                 destType: {
                     value: 'msg',
                     required: true,
-                    types: ['msg', 'flow', 'global'],
-                    validate: RED.validators.typedInput('destType')
+                    types: ['msg', 'flow', 'global']
                 },
                 destination: {
                     value: 'payload',

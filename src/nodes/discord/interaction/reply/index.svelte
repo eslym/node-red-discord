@@ -15,8 +15,7 @@
                 messageSrc: {
                     value: 'msg',
                     required: true,
-                    types: messageTypes,
-                    validate: RED.validators.typedInput('messageSrc')
+                    types: messageTypes
                 },
                 message: {
                     value: 'payload.content'

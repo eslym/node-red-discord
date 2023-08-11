@@ -15,8 +15,7 @@
                 replySrc: {
                     value: 'str',
                     required: true,
-                    types: ['str', 'msg'],
-                    validate: RED.validators.typedInput('replySrc')
+                    types: ['str', 'msg']
                 },
                 reply: {
                     value: '@original'
@@ -27,8 +26,7 @@
                     types: messageTypes
                 },
                 message: {
-                    value: 'payload.content',
-                    validate: RED.validators.typedInput('messageSrc')
+                    value: 'payload.content'
                 },
                 msg: {
                     value: {},
