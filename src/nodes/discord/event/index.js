@@ -28,9 +28,9 @@ export default function (RED) {
                 text: 'failed'
             });
         };
+        /** @type {import('discord.js').Client} */
+        const client = this.clientNode.getDiscordClient();
         let eventHandler = (...args) => {
-            /** @type {import('discord.js').Client} */
-            const client = this.clientNode.getDiscordClient();
             let context = craftDiscordContext(client, {
                 event: this.event,
                 eventArgs: Object.freeze([...args])
@@ -65,19 +65,8 @@ export default function (RED) {
             node.onDiscord(this.event, eventHandler);
         }
 
-        const restartHandler = () => {
-            this.status({
-                fill: 'blue',
-                shape: 'ring',
-                text: 'starting'
-            });
-        };
-
-        this.clientNode.on('discord:start', restartHandler);
-
         this.on('close', (_, done) => {
             node.off('failed', failedHandler);
-            this.clientNode.off('discord:start', restartHandler);
             node.offDiscord('ready', readyHandler);
             if (this.event !== undefined) {
                 node.offDiscord(this.event, eventHandler);
