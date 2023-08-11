@@ -16,7 +16,7 @@
     import EditList from './EditList.svelte';
     import MarkdownEditor from './MarkdownEditor.svelte';
     import { emojiTray } from '$editor/lib/tray';
-    import { formatEmoji } from '$editor/lib/utils';
+    import { formatEmoji } from '$shared/emoji';
 
     export let msg;
 

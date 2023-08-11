@@ -14,7 +14,6 @@
 
     function onSelect(e) {
         RED.tray.close();
-        value = e.detail;
         resolve(e.detail);
     }
 </script>

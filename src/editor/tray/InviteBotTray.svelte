@@ -24,6 +24,7 @@
 <PermissionsCalculator bind:permissions />
 <p>
     <label>
+        <strong>Extra Scope:</strong>
         <input type="checkbox" bind:checked={commands} />
         Application Commands
     </label>

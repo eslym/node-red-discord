@@ -2,6 +2,7 @@ import { promisify } from 'util';
 import Mustache from 'mustache';
 import Color from 'color';
 import { ButtonStyle, ComponentType } from 'discord.js';
+import { parseEmoji } from '$shared/emoji';
 
 /**
  * @param {import('node-red').NodeAPI} RED
@@ -276,9 +277,11 @@ async function evaluateEmoji(emoji) {
                 name: emoji.value
             };
         case 'guild':
-            return {
-                id: emoji.value
-            };
+            const e = parseEmoji(emoji.value);
+            if (!e) {
+                throw new Error(`Invalid emoji: ${emoji.value}`);
+            }
+            return e;
         default:
             return undefined;
     }

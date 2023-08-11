@@ -6,7 +6,7 @@
     import { undefinedType, clientNodeContextKey } from '../lib/constants';
     import { fetchWithCreds as fetch } from '../lib/fetch.js';
     import { emojiTray } from '$editor/lib/tray';
-    import { formatEmoji } from '$editor/lib/utils';
+    import { formatEmoji, parseEmoji } from '$shared/emoji';
 
     const searchEmoji = emojiTray();
 
@@ -32,13 +32,12 @@
     /** @type {import('svelte/store').Readable<string>} */
     let clientNode = getContext(clientNodeContextKey) ?? writable(undefined);
 
-    const testEmoji = /^<(a)?:([a-zA-Z0-9_]{2,}):(\d+)>$/;
-
     /** @param {string} emoji */
     async function getEmoji(emoji) {
-        if (!emoji || !testEmoji.test(emoji)) return null;
-        let id = emoji.match(testEmoji)[3];
-        let res = await fetch(`/discord/${$clientNode}/emojis/${id}`);
+        if (!emoji) return null;
+        let e = parseEmoji(emoji);
+        if (!e) return null;
+        let res = await fetch(`/discord/${$clientNode}/emojis/${e.id}`);
         if (!res.ok) return null;
         return res.json();
     }
