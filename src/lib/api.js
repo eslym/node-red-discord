@@ -8,6 +8,7 @@ export function declareAPI(RED) {
             res.status(404).json('Client not found');
             return;
         }
+        req.clientNode = node;
         req.discordClient = node.getDiscordClient();
         if (!req.discordClient.isReady()) {
             res.status(503).json('Client not ready');
@@ -39,6 +40,16 @@ export function declareAPI(RED) {
             res.json({
                 applicationId: client.application.id
             });
+        }
+    );
+
+    RED.httpAdmin.post(
+        '/discord/:node/restart',
+        RED.auth.needsPermission('discord.write'),
+        getClient,
+        (req, res) => {
+            req.clientNode.restartClient();
+            res.json('ok');
         }
     );
 

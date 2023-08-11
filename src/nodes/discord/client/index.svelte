@@ -76,7 +76,13 @@
 </script>
 
 <script>
-    import { Input, ToggleGroup, Collapsible, Button } from 'svelte-integration-red/components';
+    import {
+        Input,
+        ToggleGroup,
+        Collapsible,
+        Button,
+        Row
+    } from 'svelte-integration-red/components';
     import InviteBotTray from '$editor/tray/InviteBotTray.svelte';
     import { fetchWithCreds as fetch } from '$editor/lib/fetch.js';
     import { openTray } from '@eslym/rs4r/tray';
@@ -84,8 +90,9 @@
     export let node;
 
     let applicationId = undefined;
+    let restarting = false;
 
-    const openInvite = () => {
+    function openInvite() {
         if (!node.invites) {
             node.invites = {
                 permissions: '0',
@@ -111,7 +118,15 @@
             ],
             width: '500px'
         });
-    };
+    }
+
+    async function restartClient() {
+        let res = await fetch(`/discord/${node.id}/restart`, {
+            method: 'POST'
+        });
+        if (!res.ok) return;
+        restarting = true;
+    }
 
     (async () => {
         let res = await fetch(`/discord/${node.id}`);
@@ -125,7 +140,10 @@
     <Input bind:node type="text" prop="name" label="Name" />
     <Input bind:node type="password" prop="token" label="Token" credentials />
     {#if applicationId}
-        <Button label="Invite Bot" on:click={openInvite} />
+        <Row>
+            <Button inline label="Invite Bot" on:click={openInvite} disabled={restarting} />
+            <Button inline label="Restart Client" on:click={restartClient} disabled={restarting} />
+        </Row>
     {/if}
     <Collapsible collapsed label="Intents">
         <ToggleGroup

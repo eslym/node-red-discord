@@ -9,76 +9,92 @@ export default function (RED) {
         RED.nodes.createNode(this, config);
         this.name = config.name;
         this.token = this.credentials.token;
-        let client = new Client({
-            intents: config.intents,
-            partials: config.partials
-        });
-        this.discordClient = client;
         let timeout;
-        const tryLogin = () => {
-            client.login(this.token).catch((err) => {
-                this.emit('failed', err);
-                timeout = setTimeout(tryLogin, 5000);
-            });
+
+        /** @type {Client} */
+        let client = undefined;
+
+        Object.defineProperty(this, 'discordClient', {
+            get() {
+                return client;
+            },
+            set(value) {}
+        });
+
+        this.getDiscordClient = () => client;
+
+        let events = new Map();
+        let listenerWrapper = new Map();
+
+        this.onDiscord = (event, listener) => {
+            if (!events.has(event)) {
+                events.set(event, new Set());
+            }
+            events.get(event).add(listener);
+            if (!listenerWrapper.has(event)) {
+                const listener = (...args) => {
+                    if (!events.has(event)) {
+                        return;
+                    }
+                    let listeners = events.get(event);
+                    for (let listener of listeners) {
+                        listener(...args);
+                    }
+                };
+                listenerWrapper.set(event, listener);
+                client.on(event, listener);
+            }
         };
-        tryLogin();
+
+        this.offDiscord = (event, listener) => {
+            if (!events.has(event)) {
+                return;
+            }
+            let listeners = events.get(event);
+            listeners.delete(listener);
+            if (listeners.size === 0) {
+                events.delete(event);
+                client.off(event, listenerWrapper.get(event));
+                listenerWrapper.delete(event);
+            }
+        };
+
+        this.restartClient = () => {
+            this.emit('discord:start');
+            clearTimeout(timeout);
+            if (client !== undefined) {
+                client.destroy();
+            }
+            client = new Client({
+                intents: config.intents,
+                partials: config.partials
+            });
+            const tryLogin = () => {
+                client
+                    .login(this.token)
+                    .then(() => {
+                        for (const [event, listener] of listenerWrapper) {
+                            client.on(event, listener);
+                        }
+                    })
+                    .catch((err) => {
+                        this.emit('failed', err);
+                        timeout = setTimeout(tryLogin, 5000);
+                    });
+            };
+            tryLogin();
+        };
+        this.restartClient();
         this.on('close', (_, done) => {
-            client.destroy();
+            if (client !== undefined) {
+                client.destroy();
+            }
             clearTimeout(timeout);
             done();
         });
-        this.discordEventListeners = new Map();
-        this.discordListeners = new Map();
+        events = new Map();
+        listenerWrapper = new Map();
     }
-
-    /**
-     * @returns {Client}
-     */
-    DiscordClientNode.prototype.getDiscordClient = function () {
-        return this.discordClient;
-    };
-
-    /**
-     * @template {keyof import('discord.js').ClientEvents} K
-     * @param {K} event
-     * @param {keyof import('discord.js').ClientEvents[K]} listener
-     */
-    DiscordClientNode.prototype.onDiscord = function (event, listener) {
-        if (!this.discordEventListeners.has(event)) {
-            this.discordEventListeners.set(event, new Set());
-        }
-        this.discordEventListeners.get(event).add(listener);
-        if (!this.discordListeners.has(event)) {
-            let listener = (...args) => {
-                if (!this.discordEventListeners.has(event)) {
-                    return;
-                }
-                let listeners = this.discordEventListeners.get(event);
-                for (let listener of listeners) {
-                    listener(...args);
-                }
-            };
-            this.discordListeners.set(event, listener);
-            this.discordClient.on(event, listener);
-        }
-    };
-
-    /**
-     * @param {string} event
-     * @param {Function} listener
-     */
-    DiscordClientNode.prototype.offDiscord = function (event, listener) {
-        if (!this.discordEventListeners.has(event)) {
-            return;
-        }
-        let listeners = this.discordEventListeners.get(event);
-        listeners.delete(listener);
-        if (listeners.size === 0) {
-            this.discordEventListeners.delete(event);
-            this.discordClient.off(event, this.discordListeners.get(event));
-            this.discordListeners.delete(event);
-        }
-    };
 
     RED.nodes.registerType(__NODE_NAME__, DiscordClientNode, {
         credentials: {
