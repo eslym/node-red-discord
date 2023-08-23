@@ -3,7 +3,7 @@
  * @param {RequestInit|undefined} options
  * @returns {Promise<Response>}
  */
-export function fetchWithCreds(url, options) {
+export function fetch(url, options) {
     const creds = localStorage.getItem('auth-tokens');
     if (creds) {
         const token = JSON.parse(creds);
@@ -17,5 +17,5 @@ export function fetchWithCreds(url, options) {
             options.headers.Authorization = `${token.token_type} ${token.access_token}`;
         }
     }
-    return fetch(url, options);
+    return window.fetch(url, options);
 }

@@ -1,5 +1,5 @@
 {
-    "version": "0.0.1-alpha.14",
+    "version": "0.1.0-alpha.0",
     "description": "discord.js for node-red",
     "type": "commonjs",
     "license": "MIT",
@@ -15,11 +15,11 @@
         "build": "rollup -c",
         "build:publish": "rollup -c && cd dist && yarn publish",
         "format": "prettier --write .",
-        "debug": "rollup -c && node-red --userDir ./.debug",
+        "debug": "rollup -c && node-red --settings ./node-red-settings.js",
         "prepare": "husky install"
     },
     "devDependencies": {
-        "@eslym/rs4r": "1.1.1",
+        "@eslym/rs4r": "^2.0.0",
         "@schemastore/package": "^0.0.10",
         "@types/color": "^3.0.3",
         "@types/node": "^16",
@@ -31,8 +31,7 @@
         "prettier": "^2.8.8",
         "prettier-plugin-svelte": "^2.10.1",
         "pretty-quick": "^3.1.3",
-        "svelte": "^4.1.2",
-        "svelte-integration-red": "^1.14.3"
+        "svelte": "^4.1.2"
     },
     "dependencies": {
         "discord.js": "^14.11.0",

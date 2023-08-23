@@ -1,4 +1,4 @@
-import rs4r from '@eslym/rs4r';
+import rs4r from '@eslym/rs4r/rollup';
 import fs from 'fs';
 import { builtinModules } from 'module';
 

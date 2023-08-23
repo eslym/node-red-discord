@@ -1,7 +1,5 @@
-node_modules/
-resources/
-dist/
-.build/
-.debug/
-*.html
+node_modules
+dist
+.debug
+.node-red-settings.js
 yarn.lock

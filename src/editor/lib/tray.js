@@ -1,9 +1,9 @@
 import { getContext } from 'svelte';
 import { get } from 'svelte/store';
-import { fetchWithCreds } from './fetch';
+import { fetch } from './fetch';
 import SearchEmojiTray from '$editor/tray/SearchEmojiTray.svelte';
 import { clientNodeContextKey } from './constants';
-import { openTypeEditor } from '@eslym/rs4r/tray';
+import { openTypeEditor } from '@eslym/rs4r/components';
 
 export function emojiTray() {
     const store = getContext(clientNodeContextKey);
@@ -58,12 +58,12 @@ async function checkAvailable(node) {
     if (!node) {
         return false;
     }
-    let res = await fetchWithCreds(`/discord/${node}`);
+    let res = await fetch(`/discord/${node}`);
     return res.ok;
 }
 
 async function fetchAvailable() {
-    let res = await fetchWithCreds(`/discord/nodes`);
+    let res = await fetch(`/discord/nodes`);
     if (!res.ok) return [];
     let nodes = await res.json();
     return nodes;

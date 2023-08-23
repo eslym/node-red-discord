@@ -7,11 +7,11 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Build & Run",
+            "name": "Build & Launch",
             "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/node_modules/node-red/red.js",
             "cwd": "${workspaceFolder}",
-            "args": ["--userDir", "${workspaceFolder}/.debug"],
+            "args": ["--settings", "${workspaceFolder}/node-red-settings.js"],
             "preLaunchTask": "npm: build",
             "stopOnEntry": false,
             "env": {
@@ -21,11 +21,11 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Run",
+            "name": "Launch",
             "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/node_modules/node-red/red.js",
             "cwd": "${workspaceFolder}",
-            "args": ["--userDir", "${workspaceFolder}/.debug"],
+            "args": ["--settings", "${workspaceFolder}/node-red-settings.js"],
             "stopOnEntry": false,
             "env": {
                 "NODE_ENV": "development"

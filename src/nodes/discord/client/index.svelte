@@ -76,10 +76,11 @@
 </script>
 
 <script>
+    // TODO: remove SIR dependencies
     import { Input, ToggleGroup, Collapsible, Button } from 'svelte-integration-red/components';
     import InviteBotTray from '$editor/tray/InviteBotTray.svelte';
-    import { fetchWithCreds as fetch } from '$editor/lib/fetch.js';
-    import { openTray } from '@eslym/rs4r/tray';
+    import { fetch as fetch } from '$editor/lib/fetch.js';
+    import { openTray } from '@eslym/rs4r/components';
 
     export let node;
 
