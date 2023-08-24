@@ -68,7 +68,7 @@
 <script lang="ts">
     import InviteBotTray from '$editor/tray/InviteBotTray.svelte';
     import { fetch } from '$editor/lib/fetch';
-    import { Input, openTray } from '@eslym/rs4r/components';
+    import { Icon, Input, Row, openTray, tooltip } from '@eslym/rs4r/components';
     import type { EditorNodeInstance } from 'node-red';
     import { version } from '$package.json';
     import type { DiscordClientNodeDef } from '.';
@@ -113,3 +113,20 @@
 
 <Input type="text" prop="name" label="Name" />
 <Input type="password" prop="token" label="Token" />
+{#if applicationId}
+    <Row>
+        <label for={undefined} />
+        <button
+            use:tooltip={'Invite bot into your server'}
+            type="button"
+            class="red-ui-button red-ui-button-secondary"
+            on:click={openInvite}
+        >
+            <Icon icon={{ fa4: 'plus' }} />
+            Invite
+        </button>
+    </Row>
+{/if}
+<Row>
+    <label for="dc-intents"> Intents </label>
+</Row>
