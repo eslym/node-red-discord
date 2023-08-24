@@ -1,22 +1,21 @@
+import type { CommandInteractionOption, Interaction } from 'discord.js';
+
 const interactionReplies = new WeakMap();
 
-/**
- * @param {import('discord.js').Interaction} interaction
- */
-export function mapInteraction(interaction) {
+export function mapInteraction(interaction: Interaction) {
     let res = {
         $instance: () => interaction,
         id: interaction.id,
         guildId: interaction.guildId,
         channelId: interaction.channelId,
-        message: interaction.message,
         member: interaction.member,
         user: interaction.user
-    };
+    } as any;
     if (interaction.isRepliable()) {
         res.replies = [...getReplies(interaction).values()];
     }
     if (interaction.isAnySelectMenu()) {
+        res.message = interaction.message;
         res.type = 'select';
         if (interaction.isUserSelectMenu()) {
             res.selectType = 'user';
@@ -34,6 +33,7 @@ export function mapInteraction(interaction) {
         return res;
     }
     if (interaction.isButton()) {
+        res.message = interaction.message;
         res.type = 'button';
         res.customId = interaction.customId;
         return res;
@@ -43,10 +43,11 @@ export function mapInteraction(interaction) {
         res.commandName = interaction.commandName;
         res.options = mapCommandOptions(interaction.options.data);
         if (interaction.isMessageContextMenuCommand()) {
+            res.targetMessage = interaction.targetMessage;
             res.commandType = 'messageContextMenu';
         } else if (interaction.isUserContextMenuCommand()) {
             res.commandType = 'userContextMenu';
-        } else if (interaction.isChatInputCommand) {
+        } else if (interaction.isChatInputCommand()) {
             res.commandType = 'chatInput';
         }
         return res;
@@ -63,11 +64,7 @@ export function mapInteraction(interaction) {
     return res;
 }
 
-/**
- *
- * @param {import('discord.js').CommandInteractionOption[]} options
- */
-function mapCommandOptions(options) {
+function mapCommandOptions(options: readonly CommandInteractionOption[]) {
     return Object.fromEntries(
         options.map((option) => {
             let o = {
@@ -98,7 +95,7 @@ function mapCommandOptions(options) {
     );
 }
 
-export function getReplies(interaction) {
+export function getReplies(interaction: Interaction) {
     if (!interactionReplies.has(interaction)) {
         interactionReplies.set(interaction, new Map());
     }

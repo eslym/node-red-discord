@@ -1,45 +1,35 @@
-<script context="module">
-    export function register(render, update, revert) {
-        RED.nodes.registerType(__NODE_NAME__, {
-            category: 'config',
-            defaults: {
-                name: {
-                    value: '',
-                    required: true
-                },
-                intents: {
-                    value: []
-                },
-                partials: {
-                    value: []
-                },
-                invites: {
-                    value: {
-                        permissions: '0',
-                        commands: false
-                    }
-                },
-                _version: {}
+<script context="module" lang="ts">
+    export const register = createRegister(__NODE_NAME__, {
+        category: 'config',
+        defaults: {
+            name: {
+                value: '',
+                required: true
             },
-            credentials: {
-                token: { type: 'text', label: 'Token' }
+            intents: {
+                value: []
             },
-            exportable: false,
-            label: function () {
-                return this.name || 'Client';
+            partials: {
+                value: []
             },
-            paletteLabel: 'Client',
-            oneditprepare: function () {
-                render(this);
+            invites: {
+                value: {
+                    permissions: 0,
+                    commands: false
+                }
             },
-            oneditsave: function () {
-                return update(this);
-            },
-            oneditcancel: function () {
-                revert(this);
+            _version: {
+                value: version
             }
-        });
-    }
+        },
+        credentials: {
+            token: { type: 'text' }
+        },
+        label: function () {
+            return this.name || 'Client';
+        },
+        paletteLabel: 'Client'
+    });
 
     const intents = [
         'Guilds',
@@ -75,35 +65,34 @@
     ];
 </script>
 
-<script>
-    // TODO: remove SIR dependencies
-    import { Input, ToggleGroup, Collapsible, Button } from 'svelte-integration-red/components';
+<script lang="ts">
     import InviteBotTray from '$editor/tray/InviteBotTray.svelte';
-    import { fetch as fetch } from '$editor/lib/fetch.js';
-    import { openTray } from '@eslym/rs4r/components';
+    import { fetch } from '$editor/lib/fetch';
+    import { Input, openTray } from '@eslym/rs4r/components';
+    import type { EditorNodeInstance } from 'node-red';
+    import { version } from '$package.json';
+    import type { DiscordClientNodeDef } from '.';
+    import { createRegister } from '$editor/lib/utils';
 
-    export let node;
+    export let node: EditorNodeInstance<
+        DiscordClientNodeDef & { invites: { permissions: number; commands: boolean } }
+    >;
 
-    let applicationId = undefined;
+    let applicationId: string | undefined = undefined;
 
     const openInvite = () => {
-        if (!node.invites) {
-            node.invites = {
-                permissions: '0',
-                commands: false
-            };
-        }
         openTray(InviteBotTray, {
             title: 'Invite Bot',
-            value: applicationId,
-            props: node.invites,
+            props: {
+                ...node.invites,
+                applicationId
+            },
             binding: {
                 permissions: (v) => (node.invites.permissions = v),
                 commands: (v) => (node.invites.commands = v)
             },
             buttons: [
                 {
-                    id: 'node-dialog-back',
                     text: RED._('common.label.back'),
                     click() {
                         RED.tray.close();
@@ -122,34 +111,5 @@
     })();
 </script>
 
-<div>
-    <Input bind:node type="text" prop="name" label="Name" />
-    <Input bind:node type="password" prop="token" label="Token" credentials />
-    {#if applicationId}
-        <Button label="Invite Bot" on:click={openInvite} />
-    {/if}
-    <Collapsible collapsed label="Intents">
-        <ToggleGroup
-            bind:node
-            prop="intents"
-            options={intents}
-            multiselect={true}
-            showHeader={false}
-            type="checkbox"
-            flexDirection="column"
-            inline={false}
-        />
-    </Collapsible>
-    <Collapsible collapsed label="Partials">
-        <ToggleGroup
-            bind:node
-            prop="partials"
-            options={partials}
-            multiselect={true}
-            showHeader={false}
-            type="checkbox"
-            flexDirection="column"
-            inline={false}
-        />
-    </Collapsible>
-</div>
+<Input type="text" prop="name" label="Name" />
+<Input type="password" prop="token" label="Token" />

@@ -1,20 +1,48 @@
-import { Client } from 'discord.js';
+import { Client, type Partials, type ClientEvents, type GatewayIntentsString } from 'discord.js';
 import { declareAPI } from '$lib/api';
+import type { NodeAPI, Node, NodeDef } from 'node-red';
+import { defineReadonlyProperty } from '$lib/utils';
 
-/**
- * @param {import('node-red').NodeAPI} RED
- */
-export default function (RED) {
-    function DiscordClientNode(config) {
+export interface DiscordClientNodeCreds {
+    token: string;
+}
+
+export interface DiscordClientNodeDef extends NodeDef {
+    name: string;
+    intents: GatewayIntentsString[];
+    partials: Partials[];
+}
+
+export interface DiscordClientNode extends Node<DiscordClientNodeCreds> {
+    name: string;
+    token: string;
+    readonly discordClient: Client;
+    discordEventListeners: Map<string, Set<Function>>;
+    discordListeners: Map<string, Function>;
+    onDiscord<K extends keyof ClientEvents>(event: K, listener: ClientEvents[K]): void;
+    offDiscord(event: string, listener: Function): void;
+}
+
+export default function (RED: NodeAPI) {
+    function DiscordClientNode(this: DiscordClientNode, config: DiscordClientNodeDef) {
         RED.nodes.createNode(this, config);
         this.name = config.name;
         this.token = this.credentials.token;
-        let client = new Client({
+        const client = new Client({
             intents: config.intents,
             partials: config.partials
         });
-        this.discordClient = client;
-        let timeout;
+        defineReadonlyProperty(this, 'discordClient', client);
+        let timeout: NodeJS.Timeout;
+        const ready = () => {
+            RED.events.emit('runtime-event', {
+                id: 'discord/client/ready' + this.id,
+                payload: {
+                    applicationId: client.application?.id
+                }
+            });
+        };
+        client.on('ready', ready);
         const tryLogin = () => {
             client.login(this.token).catch((err) => {
                 this.emit('failed', err);
@@ -22,7 +50,8 @@ export default function (RED) {
             });
         };
         tryLogin();
-        this.on('close', (_, done) => {
+        this.on('close', (_: boolean, done: () => void) => {
+            client.off('ready', ready);
             client.destroy();
             clearTimeout(timeout);
             done();
@@ -31,25 +60,16 @@ export default function (RED) {
         this.discordListeners = new Map();
     }
 
-    /**
-     * @returns {Client}
-     */
-    DiscordClientNode.prototype.getDiscordClient = function () {
-        return this.discordClient;
-    };
-
-    /**
-     * @template {keyof import('discord.js').ClientEvents} K
-     * @param {K} event
-     * @param {keyof import('discord.js').ClientEvents[K]} listener
-     */
-    DiscordClientNode.prototype.onDiscord = function (event, listener) {
+    DiscordClientNode.prototype.onDiscord = function (
+        event: keyof ClientEvents,
+        listener: (...args: any[]) => void
+    ) {
         if (!this.discordEventListeners.has(event)) {
             this.discordEventListeners.set(event, new Set());
         }
         this.discordEventListeners.get(event).add(listener);
         if (!this.discordListeners.has(event)) {
-            let listener = (...args) => {
+            let listener = (...args: any[]) => {
                 if (!this.discordEventListeners.has(event)) {
                     return;
                 }
@@ -63,11 +83,7 @@ export default function (RED) {
         }
     };
 
-    /**
-     * @param {string} event
-     * @param {Function} listener
-     */
-    DiscordClientNode.prototype.offDiscord = function (event, listener) {
+    DiscordClientNode.prototype.offDiscord = function (event: string, listener: Function) {
         if (!this.discordEventListeners.has(event)) {
             return;
         }

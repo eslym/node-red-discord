@@ -1,4 +1,4 @@
-<script context="module">
+<script context="module" lang="ts">
     const perms = {
         'General Permissions': {
             'View Channels': 10,
@@ -45,9 +45,9 @@
             'Move Members': 24,
             'Request to Speak': 32
         }
-    };
+    } as Record<string, Record<string, number>>;
 
-    function toggle(bits, bit) {
+    function toggle(bits: number, bit: number) {
         if (checked(bits, bit)) {
             return bits - Math.pow(2, bit);
         } else {
@@ -55,13 +55,13 @@
         }
     }
 
-    function checked(bits, bit) {
-        return (bits / Math.pow(2, bit)) & 1;
+    function checked(bits: number, bit: number) {
+        return Boolean((bits / Math.pow(2, bit)) & 1);
     }
 </script>
 
-<script>
-    export let permissions;
+<script lang="ts">
+    export let permissions: number = 0;
 </script>
 
 <div class="container">

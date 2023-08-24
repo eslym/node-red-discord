@@ -1,3 +1,5 @@
+/// <reference types="svelte" />
+
 import { EditorRED } from 'node-red';
 
 declare global {

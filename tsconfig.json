@@ -1,0 +1,17 @@
+{
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "compilerOptions": {
+        "target": "ESNext",
+        "baseUrl": ".",
+        "moduleResolution": "Node",
+        "verbatimModuleSyntax": true,
+        "strict": true,
+        "paths": {
+            "$lib/*": ["./src/lib/*"],
+            "$editor/*": ["./src/editor/*"],
+            "$shared/*": ["./src/shared/*"]
+        },
+        "types": ["node-red", "jquery"]
+    },
+    "include": ["types.d.ts", "global.d.ts", "src/**/*.ts", "src/**/*.svelte", "package.json"]
+}

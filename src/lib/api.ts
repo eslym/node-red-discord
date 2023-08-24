@@ -1,43 +1,35 @@
-/**
- * @param {import('node-red').NodeAPI} RED
- */
-export function declareAPI(RED) {
-    function getClient(req, res, next) {
-        let node = RED.nodes.getNode(req.params.node);
+import type { NextFunction, Request, Response } from 'express';
+import type { NodeAPI } from 'node-red';
+import type { Client } from 'discord.js';
+import type { DiscordClientNode } from 'src/nodes/discord/client';
+
+export function declareAPI(RED: NodeAPI) {
+    function getClient(
+        req: Request,
+        res: Response<any, { discordClient: Client }>,
+        next: NextFunction
+    ) {
+        let node = RED.nodes.getNode(req.params.node) as DiscordClientNode;
         if (!node || node.type !== 'discord.client') {
             res.status(404).json('Client not found');
             return;
         }
-        req.discordClient = node.getDiscordClient();
-        if (!req.discordClient.isReady()) {
+        res.locals.discordClient = node.discordClient;
+        if (!res.locals.discordClient.isReady()) {
             res.status(503).json('Client not ready');
             return;
         }
         next();
     }
 
-    RED.httpAdmin.get('/discord/nodes', RED.auth.needsPermission('discord.read'), (req, res) => {
-        let nodes = [];
-        RED.nodes.eachNode((node) => {
-            if (node.type === 'discord.client') {
-                nodes.push({
-                    id: node.id,
-                    name: node.name
-                });
-            }
-        });
-        res.json(nodes);
-    });
-
     RED.httpAdmin.get(
         '/discord/:node',
         RED.auth.needsPermission('discord.read'),
         getClient,
         (req, res) => {
-            /** @type {import('discord.js').Client} */
-            let client = req.discordClient;
+            let client = res.locals.discordClient;
             res.json({
-                applicationId: client.application.id
+                applicationId: client.application?.id
             });
         }
     );
@@ -48,7 +40,7 @@ export function declareAPI(RED) {
         getClient,
         (req, res) => {
             res.json(
-                req.discordClient.guilds.cache.map((guild) => {
+                res.locals.discordClient.guilds.cache.map((guild) => {
                     return {
                         id: guild.id,
                         name: guild.name,
@@ -64,8 +56,7 @@ export function declareAPI(RED) {
         RED.auth.needsPermission('discord.guilds.read'),
         getClient,
         (req, res) => {
-            /** @type {import('discord.js').Guild} */
-            let guild = req.discordClient.guilds.cache.get(req.params.guild);
+            let guild = res.locals.discordClient.guilds.cache.get(req.params.guild);
             if (!guild) {
                 res.status(404).end();
                 return;
@@ -83,21 +74,20 @@ export function declareAPI(RED) {
         RED.auth.needsPermission('discord.channels.read'),
         getClient,
         (req, res) => {
-            /** @type {import('discord.js').Client} */
-            let client = req.discordClient;
+            let client = res.locals.discordClient;
             let guild = client.guilds.cache.get(req.params.guild);
             if (!guild) {
                 res.status(404).end();
                 return;
             }
-            let channels = guild.channels;
+            let channels = guild.channels.cache;
             if (req.query.guild) {
-                channels = channels.cache.filter((channel) => {
+                channels = channels.filter((channel) => {
                     return channel.guild.id === req.query.guild;
                 });
             }
             if (req.query.text) {
-                channels = channels.cache.filter((channel) => {
+                channels = channels.filter((channel) => {
                     return channel.isTextBased();
                 });
             }
@@ -118,8 +108,7 @@ export function declareAPI(RED) {
         RED.auth.needsPermission('discord.channels.read'),
         getClient,
         (req, res) => {
-            /** @type {import('discord.js').Guild} */
-            let guild = req.discordClient.guilds.cache.get(req.params.guild);
+            let guild = res.locals.discordClient.guilds.cache.get(req.params.guild);
             if (!guild) {
                 res.status(404).end();
                 return;
@@ -142,8 +131,7 @@ export function declareAPI(RED) {
         RED.auth.needsPermission('discord.roles.read'),
         getClient,
         (req, res) => {
-            /** @type {import('discord.js').Guild} */
-            let guild = req.discordClient.guilds.cache.get(req.params.guild);
+            let guild = res.locals.discordClient.guilds.cache.get(req.params.guild);
             if (!guild) {
                 res.status(404).end();
                 return;
@@ -165,8 +153,7 @@ export function declareAPI(RED) {
         RED.auth.needsPermission('discord.roles.read'),
         getClient,
         (req, res) => {
-            /** @type {import('discord.js').Guild} */
-            let guild = req.discordClient.guilds.cache.get(req.params.guild);
+            let guild = res.locals.discordClient.guilds.cache.get(req.params.guild);
             if (!guild) {
                 res.status(404).end();
                 return;
@@ -188,9 +175,8 @@ export function declareAPI(RED) {
         '/discord/:node/emojis',
         RED.auth.needsPermission('discord.emojis.read'),
         getClient,
-        (req, res) => {
-            /** @type {import('discord.js').Client} */
-            let client = req.discordClient;
+        (req: Request<any, any, any, { q: string }>, res) => {
+            let client = res.locals.discordClient;
             let keyword = req.query.q ? req.query.q.toLowerCase() : null;
             let guilds = [...client.guilds.cache.entries()]
                 .map(([_, guild]) => {
@@ -222,8 +208,7 @@ export function declareAPI(RED) {
         RED.auth.needsPermission('discord.emojis.read'),
         getClient,
         (req, res) => {
-            /** @type {import('discord.js').Emoji} */
-            let emoji = req.discordClient.emojis.cache.get(req.params.emoji);
+            let emoji = res.locals.discordClient.emojis.cache.get(req.params.emoji);
             if (!emoji) {
                 res.status(404).json('Emoji not found');
                 return;
