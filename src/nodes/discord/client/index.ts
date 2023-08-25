@@ -10,7 +10,7 @@ export interface DiscordClientNodeCreds {
 export interface DiscordClientNodeDef extends NodeDef {
     name: string;
     intents: GatewayIntentsString[];
-    partials: Partials[];
+    partials: (keyof typeof Partials)[];
 }
 
 export interface DiscordClientNode extends Node<DiscordClientNodeCreds> {
@@ -19,7 +19,10 @@ export interface DiscordClientNode extends Node<DiscordClientNodeCreds> {
     readonly discordClient: Client;
     discordEventListeners: Map<string, Set<Function>>;
     discordListeners: Map<string, Function>;
-    onDiscord<K extends keyof ClientEvents>(event: K, listener: ClientEvents[K]): void;
+    onDiscord<K extends keyof ClientEvents>(
+        event: K,
+        listener: (...args: ClientEvents[K]) => void
+    ): void;
     offDiscord(event: string, listener: Function): void;
 }
 
@@ -30,7 +33,7 @@ export default function (RED: NodeAPI) {
         this.token = this.credentials.token;
         const client = new Client({
             intents: config.intents,
-            partials: config.partials
+            partials: config.partials as any
         });
         defineReadonlyProperty(this, 'discordClient', client);
         let timeout: NodeJS.Timeout;

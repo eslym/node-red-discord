@@ -73,9 +73,12 @@
     import { version } from '$package.json';
     import type { DiscordClientNodeDef } from '.';
     import { createRegister } from '$editor/lib/utils';
+    import MultiSelect from '$editor/components/MultiSelect.svelte';
 
     export let node: EditorNodeInstance<
-        DiscordClientNodeDef & { invites: { permissions: number; commands: boolean } }
+        DiscordClientNodeDef & {
+            invites: { permissions: number; commands: boolean };
+        }
     >;
 
     let applicationId: string | undefined = undefined;
@@ -88,8 +91,8 @@
                 applicationId
             },
             binding: {
-                permissions: (v) => (node.invites.permissions = v),
-                commands: (v) => (node.invites.commands = v)
+                permissions: (v?: number) => (node.invites.permissions = v!),
+                commands: (v?: boolean) => (node.invites.commands = v!)
             },
             buttons: [
                 {
@@ -128,5 +131,72 @@
     </Row>
 {/if}
 <Row>
-    <label for="dc-intents"> Intents </label>
+    <label for="dc-intents">Intents</label>
+    <MultiSelect id="dc-intents" bind:value={node.intents} options={intents} />
 </Row>
+<Row>
+    <label for={undefined} />
+    <div class="rs4r-tags">
+        {#each node.intents as intent, index (intent)}
+            <div class="rs4r-tag">
+                <span>{intent}</span>
+                <button
+                    type="button"
+                    on:click={() =>
+                        (node.intents = [
+                            ...node.intents.slice(0, index),
+                            ...node.intents.slice(index + 1)
+                        ])}><Icon icon={{ fa4: 'times-circle' }} /></button
+                >
+            </div>
+        {/each}
+    </div>
+</Row>
+<Row>
+    <label for="dc-partials">Partials</label>
+    <MultiSelect id="dc-partials" bind:value={node.partials} options={partials} />
+</Row>
+<Row>
+    <label for={undefined} />
+    <div class="rs4r-tags">
+        {#each node.partials as partials, index (partials)}
+            <div class="rs4r-tag">
+                <span>{partials}</span>
+                <button
+                    type="button"
+                    on:click={() =>
+                        (node.partials = [
+                            ...node.partials.slice(0, index),
+                            ...node.partials.slice(index + 1)
+                        ])}><Icon icon={{ fa4: 'times-circle' }} /></button
+                >
+            </div>
+        {/each}
+    </div>
+</Row>
+
+<style lang="scss">
+    .rs4r-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px 5px;
+        font-size: 80%;
+        width: min-content;
+        flex-grow: 1;
+
+        .rs4r-tag {
+            display: flex;
+            color: var(--red-ui-workspace-button-color);
+            background-color: var(--red-ui-workspace-button-background);
+            border: 1px solid var(--red-ui-form-input-border-color);
+            padding: 2px 5px;
+            border-radius: 3px;
+
+            & > button {
+                all: unset;
+                margin-left: 5px;
+                cursor: pointer;
+            }
+        }
+    }
+</style>

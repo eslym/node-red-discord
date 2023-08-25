@@ -3,11 +3,11 @@ import type { DiscordClientNode } from '../client';
 import { Events, type Client } from 'discord.js';
 import {
     craftDiscordContext,
-    craftReadyPayload,
     defineReadonlyProperty,
     hasTimeoutStatus,
     type HasTimeoutStatus
 } from '$lib/utils';
+import { craftEventPayload } from '$lib/events';
 
 export interface DiscordTriggerNodeDef extends NodeDef {
     client: string;
@@ -54,7 +54,7 @@ export default function (RED: NodeAPI) {
             args: [this.discordClient]
         });
         msg.topic = Events.ClientReady;
-        msg.payload = craftReadyPayload(this.discordClient);
+        msg.payload = craftEventPayload('ready', [this.discordClient]);
         sendFunc(msg);
         this.timeoutStatus({ fill: 'blue', shape: 'dot', text: 'triggered' }, 3000);
     };

@@ -1,6 +1,6 @@
 import * as $lib from 'discord.js';
 import * as Flatted from 'flatted';
-import type { Node, NodeStatus } from 'node-red';
+import type { Node, NodeMessage, NodeStatus } from 'node-red';
 
 export type DiscordContext<T extends Record<string, any>> = T & {
     $lib: typeof $lib;
@@ -20,7 +20,7 @@ export type DiscordContextFunc<T extends DiscordContext<any>> = (
 export function craftDiscordContext<T extends Record<string, any> = any>(
     client: $lib.Client,
     props: T
-): DiscordContext<T> {
+): DiscordContextFunc<DiscordContext<T>> {
     const ctx = Object.freeze({
         ...props,
         $lib: $lib,
@@ -32,15 +32,6 @@ export function craftDiscordContext<T extends Record<string, any> = any>(
         }
         return ctx;
     }) as any;
-}
-
-/** @type {$lib.Client} */
-export function craftReadyPayload(client: $lib.Client) {
-    return {
-        readyAt: client.readyAt,
-        application: Flatted.parse(Flatted.stringify(client.application)),
-        user: Flatted.parse(Flatted.stringify(client.user))
-    };
 }
 
 export function defineReadonlyProperty<T, K extends keyof T>(obj: T, key: K, value: T[K]) {
