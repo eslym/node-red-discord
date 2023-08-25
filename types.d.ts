@@ -8,6 +8,11 @@ declare module '*?red-res' {
     export default path;
 }
 
+declare module '*?text' {
+    const text: string;
+    export default text;
+}
+
 declare module '$package.json' {
     import { JSONSchemaForNPMPackageJsonFiles } from '@schemastore/package';
 

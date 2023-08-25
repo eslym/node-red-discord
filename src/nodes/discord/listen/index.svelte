@@ -1,4 +1,36 @@
-<script lang="ts">
+<script lang="ts" context="module">
+    import { createRegister } from '$editor/lib/utils';
+    import { Input } from '@eslym/rs4r/components';
+    import type { DiscordListenNodeDef } from '.';
+    import type { EditorNodeInstance } from 'node-red';
+    import type { ClientEvents } from 'discord.js';
+
+    export const register = createRegister(__NODE_NAME__, {
+        category: 'discord',
+        defaults: {
+            name: {
+                value: ''
+            },
+            client: {
+                value: '',
+                type: 'discord.client',
+                required: true
+            },
+            event: {
+                value: '',
+                required: true
+            },
+            ignoreBot: {
+                value: false
+            }
+        },
+        paletteLabel() {
+            if (this.event) return `On ${eventMap[this.event]}`;
+            return 'Listen';
+        },
+        outputs: 1
+    });
+
     const events = {
         'Auto Moderation': {
             autoModerationActionExecution: 'Auto Moderation Action Execution',
@@ -79,5 +111,47 @@
             error: 'Error',
             warn: 'Warning'
         }
-    };
+    } as Record<string, Record<string, string>>;
+
+    const eventMap = Object.fromEntries(
+        Object.entries(events)
+            .map(([_, v]) => Object.entries(v))
+            .flat(1)
+    );
+
+    const canIgnoreBot = new Set<keyof ClientEvents>([
+        'messageCreate',
+        'messageDelete',
+        'messageUpdate',
+        'presenceUpdate',
+        'interactionCreate',
+        'guildMemberAdd',
+        'guildMemberAvailable',
+        'guildMemberRemove',
+        'guildMemberUpdate',
+        'guildBanAdd',
+        'guildBanRemove',
+        'threadMemberUpdate',
+        'userUpdate',
+        'typingStart'
+    ]);
 </script>
+
+<script lang="ts">
+    export let node: EditorNodeInstance<DiscordListenNodeDef>;
+</script>
+
+<Input prop="name" label="Name" />
+<Input prop="client" label="Client" />
+<Input prop="event" label="Events" type="select">
+    {#each Object.keys(events) as group}
+        <optgroup label={group}>
+            {#each Object.entries(events[group]) as option}
+                <option value={option[0]}>{option[1]}</option>
+            {/each}
+        </optgroup>
+    {/each}
+</Input>
+{#if canIgnoreBot.has(node.event)}
+    <Input prop="ignoreBot" label="Ignore Bot" type="checkbox" />
+{/if}

@@ -7,7 +7,7 @@ import {
     hasTimeoutStatus,
     type HasTimeoutStatus
 } from '$lib/utils';
-import { craftEventPayload } from '$lib/events';
+import { craftEventPayload } from '$lib/payload';
 
 export interface DiscordTriggerNodeDef extends NodeDef {
     client: string;
@@ -63,7 +63,7 @@ export default function (RED: NodeAPI) {
 
     RED.httpAdmin.post(
         '/discord/:id/trigger',
-        RED.auth.needsPermission('discord.write'),
+        RED.auth.needsPermission('discord.trigger'),
         (req, res) => {
             const node = RED.nodes.getNode(req.params.id) as DiscordTriggerNode;
             if (!node || node.type !== __NODE_NAME__) {

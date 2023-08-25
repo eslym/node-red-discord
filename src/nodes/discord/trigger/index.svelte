@@ -25,9 +25,6 @@
         },
         inputs: 0,
         outputs: 1,
-        label: function () {
-            return this.name || 'Trigger';
-        },
         paletteLabel: 'Trigger',
         button: {
             visible() {

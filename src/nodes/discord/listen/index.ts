@@ -1,16 +1,52 @@
-import type { ClientEvents } from 'discord.js';
+import { Events, type ClientEvents } from 'discord.js';
 import type { NodeAPI, Node, NodeDef } from 'node-red';
 import type { DiscordClientNode } from '../client';
 import { craftDiscordContext, hasTimeoutStatus, type HasTimeoutStatus } from '$lib/utils';
-import { craftEventPayload } from '$lib/events';
+import { craftEventPayload } from '$lib/payload';
 
 export interface DiscordListenNodeDef extends NodeDef {
     name: string;
     client: string;
     event: keyof ClientEvents;
+    ignoreBot: boolean;
 }
 
 export interface DiscordListenNode extends Node<DiscordListenNodeDef>, HasTimeoutStatus {}
+
+const isBot = new Map<keyof ClientEvents, (...args: any[]) => boolean>();
+
+function registerBotIgnore<K extends keyof ClientEvents>(
+    events: readonly K[],
+    predicate: (a1: ClientEvents[K][0], a2: ClientEvents[K][1]) => boolean | undefined
+) {
+    for (const event of events) {
+        isBot.set(event, predicate as any);
+    }
+}
+
+registerBotIgnore(
+    [Events.MessageCreate, Events.MessageDelete, Events.MessageUpdate],
+    (m) => m.author?.bot
+);
+
+registerBotIgnore([Events.PresenceUpdate], (_, p) => p.user?.bot);
+
+registerBotIgnore([Events.InteractionCreate, Events.TypingStart], (a) => a.user.bot);
+
+registerBotIgnore(
+    [
+        Events.GuildMemberAdd,
+        Events.GuildMemberAvailable,
+        Events.GuildMemberRemove,
+        Events.GuildMemberUpdate,
+        Events.ThreadMemberUpdate
+    ],
+    (m) => m.user?.bot
+);
+
+registerBotIgnore([Events.GuildBanAdd, Events.GuildBanRemove], (b) => b.user.bot);
+
+registerBotIgnore([Events.UserUpdate], (u) => u.bot);
 
 export default function (RED: NodeAPI) {
     function DiscordListenNode(this: DiscordListenNode, config: DiscordListenNodeDef) {
@@ -28,6 +64,9 @@ export default function (RED: NodeAPI) {
         };
         clientNode.onDiscord('ready', ready);
         const listener = (...args: ClientEvents[keyof ClientEvents]) => {
+            if (config.ignoreBot && isBot.has(config.event) && isBot.get(config.event)!(...args)) {
+                return;
+            }
             const context = craftDiscordContext(clientNode.discordClient, {
                 event: config.event,
                 args

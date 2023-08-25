@@ -1,7 +1,16 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { NodeAPI } from 'node-red';
-import type { Client } from 'discord.js';
+import type {
+    AnyThreadChannel,
+    Channel,
+    Client,
+    DMChannel,
+    PartialDMChannel,
+    PartialGroupDMChannel,
+    TextBasedChannel
+} from 'discord.js';
 import type { DiscordClientNode } from 'src/nodes/discord/client';
+import { stream, type Stream } from './generator';
 
 export function declareAPI(RED: NodeAPI) {
     function getClient(
@@ -123,6 +132,44 @@ export function declareAPI(RED: NodeAPI) {
                 name: channel.name,
                 type: channel.type
             });
+        }
+    );
+
+    RED.httpAdmin.get(
+        '/discord/:node/textChannels',
+        RED.auth.needsPermission('discord.channels.read'),
+        getClient,
+        (req, res) => {
+            let channels = stream(res.locals.discordClient.channels.cache.values()).filter(
+                (ch) => ch.isTextBased() && !ch.isDMBased() && !ch.isThread()
+            ) as Stream<
+                Exclude<
+                    TextBasedChannel,
+                    DMChannel | PartialDMChannel | PartialGroupDMChannel | AnyThreadChannel
+                >
+            >;
+            const query = req.query.q;
+            if (typeof query === 'string') {
+                channels = channels.filter((ch) => {
+                    return (
+                        ch.name.includes(query) ||
+                        ch.id.includes(query) ||
+                        ch.guild.name.includes(query)
+                    );
+                });
+            }
+            return res.json([
+                ...channels.map((ch) => ({
+                    id: ch.id,
+                    name: ch.name,
+                    type: ch.type,
+                    guild: {
+                        id: ch.guildId,
+                        name: ch.guild.name,
+                        thumbnail: ch.guild.iconURL({ size: 32, forceStatic: true })
+                    }
+                }))
+            ]);
         }
     );
 

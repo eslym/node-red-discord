@@ -1,6 +1,6 @@
 import * as $lib from 'discord.js';
 import * as Flatted from 'flatted';
-import type { Node, NodeMessage, NodeStatus } from 'node-red';
+import type { Node, NodeStatus } from 'node-red';
 
 export type DiscordContext<T extends Record<string, any>> = T & {
     $lib: typeof $lib;
@@ -81,4 +81,8 @@ export function hasTimeoutStatus(node: Node & HasTimeoutStatus) {
         originalStatus.call(this, status);
     };
     statusState.set(node, {});
+}
+
+export function flatted(value: any): any {
+    return Flatted.parse(Flatted.stringify(value));
 }

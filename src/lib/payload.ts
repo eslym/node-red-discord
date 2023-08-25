@@ -1,8 +1,68 @@
-import type { CommandInteractionOption, Interaction } from 'discord.js';
+import type {
+    ClientEvents,
+    Client,
+    Message,
+    PartialMessage,
+    Snowflake,
+    Collection,
+    GuildTextBasedChannel,
+    Interaction,
+    CommandInteractionOption
+} from 'discord.js';
+import { Events } from 'discord.js';
+import { flatted } from './utils';
+import { stream } from './generator';
 
 const interactionReplies = new WeakMap();
 
-export function mapInteraction(interaction: Interaction) {
+export function craftEventPayload<K extends keyof ClientEvents>(event: K, args: ClientEvents[K]) {
+    switch (event) {
+        case Events.ClientReady:
+            return craftReadyPayload(args[0] as any);
+        case Events.InteractionCreate:
+            return craftInteractionPayload(args[0] as any);
+        case Events.MessageCreate:
+        case Events.MessageDelete:
+        case Events.MessageUpdate:
+            return craftMessagePayload(args[0] as any);
+        case Events.MessageBulkDelete:
+            return craftBulkMessageDeletePayload(args[0] as any, args[1] as any);
+        default:
+            if (args.length === 0) return undefined;
+            if (args.length === 1) return flatted(args[0]);
+            return flatted(args);
+    }
+}
+
+function craftReadyPayload(client: Client) {
+    return {
+        readyAt: client.readyAt,
+        application: flatted(client.application),
+        user: flatted(client.user)
+    };
+}
+
+function craftMessagePayload(message: Message | PartialMessage) {
+    const base = flatted(message);
+    if (message.author) {
+        base.author = flatted(message.author);
+    }
+    return base;
+}
+
+function craftBulkMessageDeletePayload(
+    messages: Collection<Snowflake, Message | PartialMessage>,
+    channel: GuildTextBasedChannel
+) {
+    return [
+        Object.fromEntries([
+            ...stream(messages.entries()).map(([k, v]) => [k, craftMessagePayload(v)])
+        ]),
+        flatted(channel)
+    ];
+}
+
+function craftInteractionPayload(interaction: Interaction) {
     let res = {
         $instance: () => interaction,
         id: interaction.id,
@@ -15,7 +75,7 @@ export function mapInteraction(interaction: Interaction) {
         res.replies = [...getReplies(interaction).values()];
     }
     if (interaction.isAnySelectMenu()) {
-        res.message = interaction.message;
+        res.message = craftMessagePayload(interaction.message);
         res.type = 'select';
         if (interaction.isUserSelectMenu()) {
             res.selectType = 'user';
@@ -33,7 +93,7 @@ export function mapInteraction(interaction: Interaction) {
         return res;
     }
     if (interaction.isButton()) {
-        res.message = interaction.message;
+        res.message = craftMessagePayload(interaction.message);
         res.type = 'button';
         res.customId = interaction.customId;
         return res;
@@ -54,7 +114,7 @@ export function mapInteraction(interaction: Interaction) {
     }
     if (interaction.isModalSubmit()) {
         res.type = 'modal';
-        res.message = interaction.message;
+        if (interaction.message) res.message = craftMessagePayload(interaction.message);
         res.customId = interaction.customId;
         res.values = Object.fromEntries(
             interaction.fields.fields.map((com) => [com.customId, com.value])

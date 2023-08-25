@@ -20,17 +20,17 @@ export function createRegister<
             value: version
         };
         RED.nodes.registerType(name, {
-            ...baseNodeDef,
+            ...(baseNodeDef as any),
             ...def,
-            oneditprepare: function (this: EditorNodeInstance<P>) {
+            oneditprepare(this: EditorNodeInstance<P>) {
                 def.oneditprepare?.call?.(this);
                 render(this);
             },
-            oneditcancel() {
+            oneditcancel(this: EditorNodeInstance<P>) {
                 def.oneditcancel?.call?.(this);
                 revert(this);
             },
-            oneditsave() {
+            oneditsave(this: EditorNodeInstance<P>) {
                 return def.oneditsave?.call?.(this) ?? update(this);
             }
         });
