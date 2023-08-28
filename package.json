@@ -20,6 +20,7 @@
     },
     "devDependencies": {
         "@eslym/rs4r": "^2.0.6",
+        "@fortawesome/free-regular-svg-icons": "^6.4.2",
         "@fortawesome/free-solid-svg-icons": "^6.4.2",
         "@rollup/plugin-typescript": "^11.1.2",
         "@schemastore/package": "^0.0.10",

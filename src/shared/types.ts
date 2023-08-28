@@ -1,24 +1,26 @@
-export interface BuilderTypedInput<T> {
+export interface BuilderTypedInputValue<T> {
     type: string;
     value: string;
     config?: T;
 }
 
-export interface TypedInput {
+export interface TypedInputValue {
     type: string;
     value: string;
 }
 
 export interface MessageBuilderConfig {
-    embeds: BuilderTypedInput<BuilderTypedInput<EmbedBuilderConfig>[]>;
-    components: BuilderTypedInput<BuilderTypedInput<BuilderTypedInput<ComponentBuilderConfig>[]>[]>;
-    attachments: BuilderTypedInput<BuilderTypedInput<AttachmentBuilderConfig>[]>;
+    embeds: BuilderTypedInputValue<BuilderTypedInputValue<EmbedBuilderConfig>[]>;
+    components: BuilderTypedInputValue<
+        BuilderTypedInputValue<BuilderTypedInputValue<ComponentBuilderConfig>[]>[]
+    >;
+    attachments: BuilderTypedInputValue<BuilderTypedInputValue<AttachmentBuilderConfig>[]>;
 }
 
 export interface EmbedBuilderConfig {
     title: string;
     description: string;
-    fields: BuilderTypedInput<EmbedFieldBuilderConfig>[];
+    fields: BuilderTypedInputValue<EmbedFieldBuilderConfig>[];
 }
 
 export interface ComponentBuilderConfig {}
