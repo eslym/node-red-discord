@@ -42,7 +42,7 @@ function craftReadyPayload(client: Client) {
     };
 }
 
-function craftMessagePayload(message: Message | PartialMessage) {
+export function craftMessagePayload(message: Message | PartialMessage) {
     const base = flatted(message);
     if (message.author) {
         base.author = flatted(message.author);
