@@ -43,12 +43,9 @@
                     inline
                     bind:value={typedInput.config.embeds}
                     types={{
-                        undefined: {
-                            label: 'No Embeds',
-                            hasValue: false
-                        },
+                        undefined: true,
                         builder: {
-                            label: 'Builder',
+                            label: 'builder',
                             hasValue: false
                         },
                         msg: true

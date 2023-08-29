@@ -53,7 +53,7 @@
                     global: true,
                     env: true,
                     builder: {
-                        label: 'Message Builder',
+                        label: 'builder',
                         hasValue: false
                     } satisfies TypeDefinition
                 }

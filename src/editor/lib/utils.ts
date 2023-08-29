@@ -1,11 +1,6 @@
 import { version } from '$package.json';
-import type { APIPartialEmoji } from 'discord.js';
 import type { EditorNodeDef, EditorNodeInstance, EditorNodeProperties } from 'node-red';
 import { baseNodeDef } from './constants';
-
-export function formatEmoji(emoji: APIPartialEmoji) {
-    return `<${emoji.animated ? 'a' : ''}:${emoji.name}:${emoji.id}>`;
-}
 
 export function createRegister<
     P extends EditorNodeProperties = EditorNodeProperties,

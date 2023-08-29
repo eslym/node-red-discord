@@ -1,5 +1,5 @@
 <script context="module" lang="ts">
-    import { tooltip } from '@eslym/rs4r/components';
+    import { openTray, tooltip } from '@eslym/rs4r/components';
     let id = 0;
 </script>
 
@@ -12,6 +12,11 @@
         faUserGroup,
         faHashtag
     } from '@fortawesome/free-solid-svg-icons';
+    import { getAllContexts } from 'svelte';
+    import SearchEmojiTray from '$editor/tray/SearchEmojiTray.svelte';
+    import { formatEmoji } from '$shared/emoji';
+
+    const context = getAllContexts();
 
     export let value: string;
     export let placeholder: string = '';
@@ -32,12 +37,52 @@
             }
         });
     }
+
+    function createInsert() {
+        let start = textarea.selectionStart;
+        let end = textarea.selectionEnd;
+        return (text: string) => {
+            value = value.slice(0, start) + text + value.slice(end);
+            textarea.selectionStart = textarea.selectionEnd = start + text.length;
+            requestAnimationFrame(() => textarea.focus());
+        };
+    }
+
+    function insetEmoji() {
+        const insert = createInsert();
+        openTray(SearchEmojiTray, {
+            context,
+            props: {
+                onSelect(emoji) {
+                    if ('id' in emoji) {
+                        insert(formatEmoji(emoji));
+                    } else {
+                        insert(emoji.unicode);
+                    }
+                }
+            },
+            title: 'Insert Emoji',
+            buttons: [
+                {
+                    text: RED._('common.label.back'),
+                    click() {
+                        RED.tray.close();
+                    }
+                }
+            ]
+        });
+    }
 </script>
 
 <div class="rs4r-textarea">
     <div class="rs4r-control-buttons">
         <div class="button-group">
-            <button type="button" class="red-ui-button" use:tooltip={'Insert Emoji'}>
+            <button
+                type="button"
+                class="red-ui-button"
+                use:tooltip={'Insert Emoji'}
+                on:click={insetEmoji}
+            >
                 <Fa icon={faFaceSmile} fw />
             </button>
             <button type="button" class="red-ui-button" use:tooltip={'Insert Timestamp'}>

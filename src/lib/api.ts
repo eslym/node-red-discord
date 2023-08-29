@@ -222,9 +222,8 @@ export function declareAPI(RED: NodeAPI) {
         '/discord/:node/emojis',
         RED.auth.needsPermission('discord.emojis.read'),
         getClient,
-        (req: Request<any, any, any, { q: string }>, res) => {
+        (req, res) => {
             let client = res.locals.discordClient;
-            let keyword = req.query.q ? req.query.q.toLowerCase() : null;
             let guilds = [...client.guilds.cache.entries()]
                 .map(([_, guild]) => {
                     let emojis = [...guild.emojis.cache.entries()].map(([_, emoji]) => ({
@@ -233,20 +232,18 @@ export function declareAPI(RED: NodeAPI) {
                         url: emoji.url,
                         animated: emoji.animated
                     }));
-                    if (keyword) {
-                        emojis = emojis.filter((emoji) =>
-                            emoji.name.toLowerCase().includes(keyword)
-                        );
-                    }
-                    return {
-                        id: guild.id,
-                        name: guild.name,
-                        thumbnail: guild.iconURL({ size: 32, forceStatic: true }),
-                        emojis
-                    };
+                    return [
+                        guild.id,
+                        {
+                            id: guild.id,
+                            name: guild.name,
+                            thumbnail: guild.iconURL({ size: 32, forceStatic: true }),
+                            emojis
+                        }
+                    ] as const;
                 })
-                .filter((g) => g.emojis.length > 0);
-            res.json(guilds);
+                .filter((g) => g[1].emojis.length > 0);
+            res.json(Object.fromEntries(guilds));
         }
     );
 
