@@ -1,31 +1,11 @@
-<script lang="ts" context="module">
-    import Collapsible from '$editor/components/Collapsible.svelte';
-    import { Input } from '@eslym/rs4r/components';
-    import { createEventDispatcher } from 'svelte';
-    import emojiJson from '$editor/assets/emojis.json?red-res';
-
-    interface Emoji {
-        unicode: string;
-        codepoint: string;
-        name: string;
-        slug: string;
-        variants?: { unicode: string; codepoint: string }[];
-    }
-
-    let emojiDatabase: { name: string; emojis: Emoji[] }[] = [];
-
-    (async () => {
-        const res = await fetch(emojiJson);
-        if (!res.ok) return;
-        emojiDatabase = await res.json();
-    })();
-
-    function getTwemoji(codePoint: string) {
-        return `https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/${codePoint}.svg`;
-    }
-</script>
-
 <script lang="ts">
+    import Collapsible from '$editor/components/Collapsible.svelte';
+    import { emojiDatabase, type Emoji, getTwemoji } from '$editor/lib/emojis';
+    import { Input } from '@eslym/rs4r/components';
+    import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+    import { createEventDispatcher } from 'svelte';
+    import Fa from 'svelte-fa/src/fa';
+
     const dispatch = createEventDispatcher<{
         select: { unicode: string };
     }>();
@@ -39,7 +19,7 @@
     $: filteredEmojis = filterEmojis(keyword);
 
     function filterEmojis(keyword: string) {
-        const emojis = emojiDatabase
+        const emojis = $emojiDatabase
             .map((group) => ({
                 name: group.name,
                 emojis: group.emojis.filter(
@@ -58,13 +38,17 @@
         if (emoji.variants) {
             const btn = ev.target as HTMLButtonElement;
             const rect = btn.getBoundingClientRect();
-            panelStyle = `top: ${rect.top - 5}px; left: ${rect.left - 5}px;`;
+            panelStyle = `top: ${rect.top - 6}px; left: ${rect.left - 6}px;`;
             showVariants = emoji as Emoji;
             return;
         }
         dispatch('select', { unicode: emoji.unicode! });
     }
 </script>
+
+<svelte:head>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+</svelte:head>
 
 <svelte:window
     on:focusin={() => {
@@ -91,7 +75,7 @@
                     <span class="dc-guild-name">{group.name}</span>
                 </svelte:fragment>
                 <div class="dc-emoji-list">
-                    {#each group.emojis as emoji (emoji.slug)}
+                    {#each group.emojis as emoji (emoji.unicode)}
                         <button
                             type="button"
                             title={emoji.name}
@@ -105,6 +89,9 @@
                                 width="32"
                                 height="32"
                             />
+                            {#if emoji.variants}
+                                <span class="dc-emoji-expand"><Fa icon={faCaretDown} /></span>
+                            {/if}
                         </button>
                     {/each}
                 </div>
@@ -173,6 +160,14 @@
             img {
                 width: 32px;
                 height: 32px;
+            }
+
+            .dc-emoji-expand {
+                pointer-events: none;
+                position: absolute;
+                bottom: -8px;
+                right: -2px;
+                filter: drop-shadow(-3px -3px 6px var(--red-ui-primary-background));
             }
         }
     }

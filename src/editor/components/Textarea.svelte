@@ -1,9 +1,5 @@
-<script context="module" lang="ts">
-    import { openTray, tooltip } from '@eslym/rs4r/components';
-    let id = 0;
-</script>
-
 <script lang="ts">
+    import { openTray, tooltip, selection } from '@eslym/rs4r/components';
     import Fa from 'svelte-fa/src/fa';
     import { faFaceSmile, faCalendarDays } from '@fortawesome/free-regular-svg-icons';
     import {
@@ -15,41 +11,21 @@
     import { getAllContexts } from 'svelte';
     import SearchEmojiTray from '$editor/tray/SearchEmojiTray.svelte';
     import { formatEmoji } from '$shared/emoji';
+    import CodeMirror from './CodeMirror.svelte';
+    import type { EditorView } from 'codemirror';
 
     const context = getAllContexts();
 
     export let value: string;
-    export let placeholder: string = '';
 
-    export let expandTitle: string = 'Markdown Editor';
-
-    let textareaId = `dc-textarea-${++id}`;
-
-    let textarea: HTMLTextAreaElement;
-
-    function expand() {
-        RED.editor.editMarkdown({
-            value,
-            title: expandTitle,
-            stateId: textareaId,
-            complete(val) {
-                value = val;
-            }
-        });
-    }
-
-    function createInsert() {
-        let start = textarea.selectionStart;
-        let end = textarea.selectionEnd;
-        return (text: string) => {
-            value = value.slice(0, start) + text + value.slice(end);
-            textarea.selectionStart = textarea.selectionEnd = start + text.length;
-            requestAnimationFrame(() => textarea.focus());
-        };
-    }
+    let editor: EditorView;
 
     function insetEmoji() {
-        const insert = createInsert();
+        const insert = (value: string) => {
+            editor.focus();
+            const tx = editor.state.update(editor.state.replaceSelection(value));
+            editor.update([tx]);
+        };
         openTray(SearchEmojiTray, {
             context,
             props: {
@@ -101,17 +77,14 @@
             </button>
         </div>
         <div class="button-group rs4r-right">
-            <button
-                type="button"
-                class="red-ui-button"
-                use:tooltip={'Markdown Editor'}
-                on:click={expand}
-            >
+            <button type="button" class="red-ui-button" use:tooltip={'Markdown Editor'}>
                 <Fa icon={faExternalLink} fw />
             </button>
         </div>
     </div>
-    <textarea bind:this={textarea} id={textareaId} bind:value {placeholder} />
+    <div class="textarea red-ui-typedInput-container">
+        <CodeMirror bind:value bind:editor />
+    </div>
 </div>
 
 <style lang="scss">
@@ -120,11 +93,16 @@
         flex-direction: column;
         gap: 5px;
 
-        textarea {
+        .textarea {
             flex-grow: 1;
             width: 100%;
             resize: none;
             min-height: 100px;
+            padding: 6px;
+        }
+
+        .textarea:focus-within {
+            border-color: var(--red-ui-form-input-focus-color);
         }
     }
     .rs4r-control-buttons {

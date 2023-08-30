@@ -7,6 +7,7 @@
     const dispatch = createEventDispatcher<{ 'header-click': boolean }>();
 
     export let expand: boolean | undefined = true;
+    export let dispose: boolean | undefined = true;
 
     function headerClick() {
         if (dispatch('header-click', !expand, { cancelable: true })) expand = !expand;
@@ -18,8 +19,8 @@
         <Fa icon={faAngleRight} />
         <slot name="header" />
     </button>
-    {#if expand}
-        <div class="rs4r-content" transition:slide>
+    {#if !dispose || expand}
+        <div class="rs4r-content" class:rs4r-shown={expand} transition:slide>
             <slot />
         </div>
     {/if}
@@ -54,6 +55,11 @@
     }
 
     .rs4r-content {
+        display: none;
         padding: 5px 10px;
+
+        &.rs4r-shown {
+            display: block;
+        }
     }
 </style>
