@@ -92,8 +92,8 @@
                             class="dc-guild-thumbnail"
                             src={guild.thumbnail}
                             alt={guild.name}
-                            width="32px"
-                            height="32px"
+                            width="32"
+                            height="32"
                         />
                     {/if}
                 </svelte:fragment>
@@ -104,7 +104,7 @@
                             title={emoji.name}
                             on:click={() => dispatch('select', emoji)}
                         >
-                            <img src={emoji.url} alt={emoji.name} loading="lazy" />
+                            <img src={emoji.url} alt={emoji.name} />
                         </button>
                     {/each}
                 </div>
@@ -122,20 +122,20 @@
 
         .dc-emoji-search-result {
             height: 0;
+            margin-top: 15px;
             flex-grow: 1;
             overflow-y: auto;
         }
     }
     .dc-guild-name {
         display: block;
-        line-height: 32px;
-        font-size: 1.2em;
+        line-height: 24px;
     }
     .dc-guild-thumbnail {
         margin-left: auto;
         border-radius: 50%;
-        width: 32px;
-        height: 32px;
+        width: 24px;
+        height: 24px;
     }
     .dc-emoji-list {
         display: flex;

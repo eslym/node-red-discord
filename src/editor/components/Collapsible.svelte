@@ -1,14 +1,21 @@
 <script lang="ts">
     import Fa from 'svelte-fa/src/fa';
-    import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+    import { faAngleRight } from '@fortawesome/free-solid-svg-icons';
     import { slide } from 'svelte/transition';
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher<{ 'header-click': boolean }>();
 
     export let expand: boolean | undefined = true;
+
+    function headerClick() {
+        if (dispatch('header-click', !expand, { cancelable: true })) expand = !expand;
+    }
 </script>
 
 <div class="rs4r-collapsible">
-    <button type="button" class="rs4r-header" on:click={() => (expand = !expand)}>
-        <Fa icon={faAngleDown} rotate={expand ? 0 : -90} />
+    <button type="button" class="rs4r-header" class:rs4r-expanded={expand} on:click={headerClick}>
+        <Fa icon={faAngleRight} />
         <slot name="header" />
     </button>
     {#if expand}
@@ -31,14 +38,18 @@
         outline-color: var(--red-ui-form-input-focus-color);
         display: flex;
         cursor: pointer;
-        padding: 10px 15px;
+        padding: 5px 10px;
         font-weight: bold;
         align-items: center;
 
         & > :global(:first-child) {
             display: block;
             margin-right: 10px;
-            transition: transform;
+            transition: transform 0.4s ease-in-out;
+        }
+
+        &.rs4r-expanded > :global(:first-child) {
+            transform: rotate(90deg);
         }
     }
 
