@@ -118,6 +118,7 @@
                     if (!value.includes(o.value)) {
                         value = [...value, o.value];
                     }
+                    inputElement.focus();
                 }
             }}
         />

@@ -2,7 +2,6 @@ import type { NextFunction, Request, Response } from 'express';
 import type { NodeAPI } from 'node-red';
 import type {
     AnyThreadChannel,
-    Channel,
     Client,
     DMChannel,
     PartialDMChannel,

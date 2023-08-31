@@ -6,6 +6,7 @@
         "moduleResolution": "Node",
         "verbatimModuleSyntax": true,
         "strict": true,
+        "noUnusedLocals": true,
         "paths": {
             "$lib/*": ["./src/lib/*"],
             "$editor/*": ["./src/editor/*"],

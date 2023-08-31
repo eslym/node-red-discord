@@ -1,19 +1,23 @@
 <script lang="ts">
-    import { openTray, tooltip, selection } from '@eslym/rs4r/components';
+    import { openTray, tooltip } from '@eslym/rs4r/components';
     import Fa from 'svelte-fa/src/fa';
     import { faFaceSmile, faCalendarDays } from '@fortawesome/free-regular-svg-icons';
     import {
-        faExternalLink,
         faAt,
         faUserGroup,
-        faHashtag
+        faHashtag,
+        faArrowRight,
+        faArrowTurnDown
     } from '@fortawesome/free-solid-svg-icons';
     import { getAllContexts } from 'svelte';
     import SearchEmojiTray from '$editor/tray/SearchEmojiTray.svelte';
     import { formatEmoji } from '$shared/emoji';
     import CodeMirror from './CodeMirror.svelte';
     import type { EditorView } from 'codemirror';
+    import { local } from '$editor/lib/store';
+    import { name } from '$package.json';
 
+    const lineWrap = local(`${name}/lineWrap`);
     const context = getAllContexts();
 
     export let value: string;
@@ -77,13 +81,20 @@
             </button>
         </div>
         <div class="button-group rs4r-right">
-            <button type="button" class="red-ui-button" use:tooltip={'Markdown Editor'}>
-                <Fa icon={faExternalLink} fw />
+            <button
+                type="button"
+                class="red-ui-button"
+                use:tooltip={'Toggle Line Wrap'}
+                on:click={() => {
+                    $lineWrap = $lineWrap === 'true' ? 'false' : 'true';
+                }}
+            >
+                <Fa icon={$lineWrap === 'true' ? faArrowTurnDown : faArrowRight} fw />
             </button>
         </div>
     </div>
-    <div class="textarea red-ui-typedInput-container">
-        <CodeMirror bind:value bind:editor />
+    <div class="textarea">
+        <CodeMirror bind:value bind:editor wrap={$lineWrap === 'true'} />
     </div>
 </div>
 
@@ -98,11 +109,6 @@
             width: 100%;
             resize: none;
             min-height: 100px;
-            padding: 6px;
-        }
-
-        .textarea:focus-within {
-            border-color: var(--red-ui-form-input-focus-color);
         }
     }
     .rs4r-control-buttons {

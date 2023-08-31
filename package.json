@@ -19,13 +19,17 @@
         "prepare": "husky install"
     },
     "devDependencies": {
+        "@codemirror/commands": "^6.2.5",
         "@codemirror/lang-markdown": "^6.2.0",
+        "@codemirror/language": "^6.9.0",
         "@codemirror/state": "^6.2.1",
         "@codemirror/view": "^6.17.0",
         "@eslym/rs4r": "^2.0.6",
         "@fortawesome/free-regular-svg-icons": "^6.4.2",
         "@fortawesome/free-solid-svg-icons": "^6.4.2",
         "@lezer/common": "^1.0.4",
+        "@lezer/highlight": "^1.1.6",
+        "@lezer/markdown": "^1.1.0",
         "@rollup/plugin-typescript": "^11.1.2",
         "@schemastore/package": "^0.0.10",
         "@tsconfig/svelte": "^5.0.2",

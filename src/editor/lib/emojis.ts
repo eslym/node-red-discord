@@ -47,24 +47,13 @@ class EmojiWidget extends WidgetType {
         super();
     }
     toDOM(view: EditorView): HTMLElement {
+        const img = document.createElement('img');
+        img.src = getTwemoji(availableTwemojis.get(this.emoji)!);
+        img.draggable = false;
+        img.alt = this.emoji;
         const span = document.createElement('span');
-        span.style.display = 'inline-block';
-        span.style.position = 'relative';
-        span.style.backgroundImage = `url(${getTwemoji(availableTwemojis.get(this.emoji)!)})`;
-        span.style.backgroundSize = 'contain';
-        span.style.backgroundRepeat = 'no-repeat';
-        span.style.backgroundPosition = 'center';
-        span.style.width = '20px';
-        span.style.height = '20px';
-        span.style.verticalAlign = 'middle';
-        const text = document.createElement('span');
-        text.style.display = 'inline-block';
-        text.style.position = 'absolute';
-        text.style.overflow = 'hidden';
-        text.style.width = '0';
-        text.style.height = '0';
-        text.textContent = this.emoji;
-        span.appendChild(text);
+        span.classList.add('cm-emoji');
+        span.appendChild(img);
         return span;
     }
 }

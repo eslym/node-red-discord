@@ -32,5 +32,6 @@
         flex-grow: 1;
         text-align: center;
         box-sizing: border-box;
+        cursor: pointer;
     }
 </style>
