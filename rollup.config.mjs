@@ -17,6 +17,10 @@ export default rs4r({
         preprocess: preprocess()
     },
     rollupPlugins: [typescript()],
+    editorExternalDeps: [
+        'https://unpkg.com/twemoji@latest/dist/twemoji.esm.js',
+        'https://unpkg.com/emoji-regex@latest/index.mjs'
+    ],
     nodeExternalDeps: [...Object.keys(pkg.dependencies || {}), builtinModules, /^node:/],
     sourceMap: true
 });

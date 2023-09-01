@@ -1,6 +1,6 @@
 <script lang="ts">
-    import Collapsible from '$editor/components/Collapsible.svelte';
-    import { emojiDatabase, type Emoji, getTwemoji } from '$editor/lib/emojis';
+    import Twemoji from '$editor/components/Twemoji.svelte';
+    import { searchEmoji, type EmojiSearchResult, type EmojiMeta } from '$editor/lib/emojis';
     import { Input } from '@eslym/rs4r/components';
     import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
     import { createEventDispatcher } from 'svelte';
@@ -11,38 +11,34 @@
     }>();
 
     let keyword = '';
-    let activeGroup = '';
-    let showVariants: Emoji | undefined;
+    let showVariants: {
+        unicode: string;
+        meta: Omit<EmojiMeta, 'variants'> & { variants: string[] };
+    };
     let variantPanel: HTMLDivElement | undefined = undefined;
     let panelStyle = '';
 
-    $: filteredEmojis = filterEmojis(keyword);
+    $: filteredEmojis = searchEmoji(keyword);
 
-    function filterEmojis(keyword: string) {
-        const emojis = $emojiDatabase
-            .map((group) => ({
-                name: group.name,
-                emojis: group.emojis.filter(
-                    (emoji) => emoji.name.includes(keyword) || emoji.slug.includes(keyword)
-                )
-            }))
-            .filter((group) => group.emojis.length > 0);
-        activeGroup = emojis[0]?.name ?? '';
-        return emojis;
-    }
-
-    function select(emoji: Partial<Emoji>, ev: MouseEvent) {
+    function select(emoji: EmojiSearchResult | { unicode: string }, ev: MouseEvent) {
         if (showVariants) {
-            showVariants = undefined;
+            showVariants = undefined as any;
         }
-        if (emoji.variants) {
+        if ('meta' in emoji && emoji.meta.variants) {
             const btn = ev.target as HTMLButtonElement;
             const rect = btn.getBoundingClientRect();
             panelStyle = `top: ${rect.top - 6}px; left: ${rect.left - 6}px;`;
-            showVariants = emoji as Emoji;
+            showVariants = emoji as any;
             return;
         }
         dispatch('select', { unicode: emoji.unicode! });
+    }
+
+    function updateFocus() {
+        if (!showVariants) return;
+        if (!variantPanel?.matches?.(':focus-within')) {
+            showVariants = undefined as any;
+        }
     }
 </script>
 
@@ -50,76 +46,32 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
 </svelte:head>
 
-<svelte:window
-    on:focusin={() => {
-        if (!showVariants) return;
-        if (!variantPanel?.matches?.(':focus-within')) {
-            showVariants = undefined;
-        }
-    }}
-/>
+<svelte:window on:focusin={updateFocus} />
 
 <div class="dc-emoji-search">
     <Input label="Search" bind:value={keyword} />
     <div class="dc-emoji-search-result">
-        {#each filteredEmojis as group, index (group.name)}
-            <Collapsible
-                on:header-click={(ev) => {
-                    ev.preventDefault();
-                    if (activeGroup === group.name) activeGroup = '';
-                    else activeGroup = group.name;
-                }}
-                expand={activeGroup === group.name}
-            >
-                <svelte:fragment slot="header">
-                    <span class="dc-guild-name">{group.name}</span>
-                </svelte:fragment>
-                <div class="dc-emoji-list">
-                    {#each group.emojis as emoji (emoji.unicode)}
-                        <button
-                            type="button"
-                            title={emoji.name}
-                            on:click={(ev) => select(emoji, ev)}
-                        >
-                            <img
-                                src={getTwemoji(emoji.codepoint)}
-                                alt={emoji.unicode}
-                                title={emoji.slug}
-                                loading="lazy"
-                                width="32"
-                                height="32"
-                            />
-                            {#if emoji.variants}
-                                <span class="dc-emoji-expand"><Fa icon={faCaretDown} /></span>
-                            {/if}
-                        </button>
-                    {/each}
-                </div>
-            </Collapsible>
-        {/each}
+        <div class="dc-emoji-list">
+            {#each filteredEmojis as emoji (emoji.unicode)}
+                <button type="button" title={emoji.meta.name} on:click={(ev) => select(emoji, ev)}>
+                    <Twemoji unicode={emoji.unicode} />
+                    {#if emoji.meta.variants}
+                        <span class="dc-emoji-expand"><Fa icon={faCaretDown} /></span>
+                    {/if}
+                </button>
+            {/each}
+        </div>
     </div>
 </div>
 
-{#if showVariants && showVariants.variants}
+{#if showVariants}
     <div bind:this={variantPanel} class="red-ui-popover-panel dc-emoji-list" style={panelStyle}>
-        <button type="button" on:click={(ev) => select({ unicode: showVariants?.unicode }, ev)}>
-            <img
-                src={getTwemoji(showVariants.codepoint)}
-                alt={showVariants.unicode}
-                loading="lazy"
-                width="32"
-                height="32"
-            />
+        <button type="button" on:click={(ev) => select(showVariants, ev)}>
+            <Twemoji unicode={showVariants.unicode} />
         </button>
-        {#each showVariants.variants as emoji (emoji.unicode)}
-            <button type="button" on:click={(ev) => select(emoji, ev)}>
-                <img
-                    src={getTwemoji(emoji.codepoint)}
-                    alt={emoji.unicode}
-                    loading="lazy"
-                    width="32"
-                    height="32"
-                />
+        {#each showVariants.meta.variants as unicode (unicode)}
+            <button type="button" on:click={(ev) => select({ unicode }, ev)}>
+                <Twemoji {unicode} />
             </button>
         {/each}
     </div>
@@ -139,9 +91,6 @@
             overflow-y: auto;
         }
     }
-    .dc-guild-name {
-        display: block;
-    }
     .dc-emoji-list {
         display: flex;
         flex-direction: row;
@@ -157,7 +106,7 @@
             margin: 0;
             outline-color: var(--red-ui-form-input-focus-color);
 
-            img {
+            :global(img) {
                 width: 32px;
                 height: 32px;
             }

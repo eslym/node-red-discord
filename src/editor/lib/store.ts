@@ -182,24 +182,25 @@ function defineLocal(): (key: string) => Writable<string | null> {
         [Writable<string | null>, Notifier<string | null>]
     >();
 
-    const localStorageSet = Storage.prototype.setItem;
-    const localStorageRemove = Storage.prototype.removeItem;
-    const localStorageClear = Storage.prototype.clear;
+    const parent = Object.getPrototypeOf(localStorage) as Storage;
+    const newProto = Object.create(parent) as Storage;
 
-    Storage.prototype.setItem = function (this: Storage, key: string, value: string) {
-        localStorageSet.call(this, key, value);
+    Object.setPrototypeOf(localStorage, newProto);
+
+    newProto.setItem = function (this: Storage, key: string, value: string) {
+        parent.setItem.call(this, key, value);
         if (this === localStorage && localStorageStores.has(key))
             localStorageStores.get(key)![1](value);
     };
 
-    Storage.prototype.removeItem = function (this: Storage, key: string) {
-        localStorageRemove.call(this, key);
+    newProto.removeItem = function (this: Storage, key: string) {
+        parent.removeItem.call(this, key);
         if (this === localStorage && localStorageStores.has(key))
             localStorageStores.get(key)![1](null);
     };
 
-    Storage.prototype.clear = function (this: Storage) {
-        localStorageClear.call(this);
+    newProto.clear = function (this: Storage) {
+        parent.clear.call(this);
         if (this === localStorage)
             for (const [_, notify] of localStorageStores.values()) notify(null);
     };
@@ -220,8 +221,8 @@ function defineLocal(): (key: string) => Writable<string | null> {
             return () => (ctx[1] = noop);
         });
         const set = (val: string | null) => {
-            if (val === null) localStorage.removeItem(key);
-            else localStorageSet.call(localStorage, key, val);
+            if (val === null) parent.removeItem.call(localStorage, key);
+            else parent.setItem.call(localStorage, key, val);
             ctx[1](val);
         };
         const update = (fn: (val: string | null) => string | null) =>
