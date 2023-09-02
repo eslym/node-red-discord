@@ -1,6 +1,12 @@
 <script lang="ts">
+    import Collapsible from '$editor/components/Collapsible.svelte';
     import Twemoji from '$editor/components/Twemoji.svelte';
-    import { searchEmoji, type EmojiSearchResult, type EmojiMeta } from '$editor/lib/emojis';
+    import {
+        searchEmoji,
+        type EmojiMeta,
+        type EmojiRecord,
+        getEmojiGroups
+    } from '$editor/lib/emojis';
     import { Input } from '@eslym/rs4r/components';
     import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
     import { createEventDispatcher } from 'svelte';
@@ -9,6 +15,8 @@
     const dispatch = createEventDispatcher<{
         select: { unicode: string };
     }>();
+
+    const groups = getEmojiGroups();
 
     let keyword = '';
     let showVariants: {
@@ -20,7 +28,7 @@
 
     $: filteredEmojis = searchEmoji(keyword);
 
-    function select(emoji: EmojiSearchResult | { unicode: string }, ev: MouseEvent) {
+    function select(emoji: EmojiRecord | { unicode: string }, ev: MouseEvent) {
         if (showVariants) {
             showVariants = undefined as any;
         }
@@ -51,16 +59,44 @@
 <div class="dc-emoji-search">
     <Input label="Search" bind:value={keyword} />
     <div class="dc-emoji-search-result">
-        <div class="dc-emoji-list">
-            {#each filteredEmojis as emoji (emoji.unicode)}
-                <button type="button" title={emoji.meta.name} on:click={(ev) => select(emoji, ev)}>
-                    <Twemoji unicode={emoji.unicode} />
-                    {#if emoji.meta.variants}
-                        <span class="dc-emoji-expand"><Fa icon={faCaretDown} /></span>
-                    {/if}
-                </button>
+        {#if keyword.match(/^\s*$/)}
+            {#each groups as group, index (group.name)}
+                <Collapsible expand={index === 0}>
+                    <span slot="header">{group.name}</span>
+                    <div class="dc-emoji-list">
+                        {#each group.emojis as emoji (emoji.unicode)}
+                            <button
+                                type="button"
+                                title={emoji.meta.name}
+                                on:click={(ev) => select(emoji, ev)}
+                            >
+                                <Twemoji unicode={emoji.unicode} />
+                                {#if emoji.meta.variants}
+                                    <span class="dc-emoji-expand"><Fa icon={faCaretDown} /></span>
+                                {/if}
+                            </button>
+                        {/each}
+                    </div>
+                </Collapsible>
             {/each}
-        </div>
+        {:else if filteredEmojis.length === 0}
+            <p>No emoji found</p>
+        {:else}
+            <div class="dc-emoji-list">
+                {#each filteredEmojis as emoji (emoji.unicode)}
+                    <button
+                        type="button"
+                        title={emoji.meta.name}
+                        on:click={(ev) => select(emoji, ev)}
+                    >
+                        <Twemoji unicode={emoji.unicode} />
+                        {#if emoji.meta.variants}
+                            <span class="dc-emoji-expand"><Fa icon={faCaretDown} /></span>
+                        {/if}
+                    </button>
+                {/each}
+            </div>
+        {/if}
     </div>
 </div>
 
@@ -119,6 +155,13 @@
                 filter: drop-shadow(-3px -3px 6px var(--red-ui-primary-background));
             }
         }
+    }
+
+    p {
+        text-align: center;
+        font-size: 1.3em;
+        margin: 8px 0;
+        color: var(--red-ui-form-placeholder-color);
     }
 
     .red-ui-popover-panel {
