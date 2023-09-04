@@ -28,8 +28,18 @@ export default function (RED: NodeAPI) {
             return;
         }
         defineReadonlyProperty(this, 'discordClient', clientNode.discordClient);
-        clientNode.discordClient.on('ready', () => {
+        const ready = () => {
             this.status({ fill: 'green', shape: 'dot', text: 'ready' });
+        };
+        clientNode.discordClient.on('ready', ready);
+        const failed = () => {
+            this.status({ fill: 'red', shape: 'ring', text: 'failed' });
+        };
+        clientNode.on('failed', failed);
+        this.on('close', (_: boolean, done: () => void) => {
+            clientNode.discordClient.off('ready', ready);
+            clientNode.off('failed', failed);
+            done();
         });
         this.on('input', (msg, send, done) => {
             this.triggerClientReady(msg, send);

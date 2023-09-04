@@ -1,6 +1,6 @@
 import { Client, type Partials, type ClientEvents, type GatewayIntentsString } from 'discord.js';
 import { declareAPI } from '$lib/api';
-import type { NodeAPI, Node, NodeDef } from 'node-red';
+import type { NodeAPI, Node, NodeDef, NodeMessageInFlow, NodeMessage } from 'node-red';
 import { defineReadonlyProperty } from '$lib/utils';
 
 export interface DiscordClientNodeCreds {
@@ -24,6 +24,20 @@ export interface DiscordClientNode extends Node<DiscordClientNodeCreds> {
         listener: (...args: ClientEvents[K]) => void
     ): void;
     offDiscord(event: string, listener: Function): void;
+
+    on(
+        event: 'input',
+        listener: (
+            msg: NodeMessageInFlow,
+            send: (msg: NodeMessage | Array<NodeMessage | NodeMessage[] | null>) => void,
+            done: (err?: Error) => void
+        ) => void
+    ): this;
+    on(event: 'close', listener: () => void): this;
+    on(event: 'close', listener: (done: () => void) => void): this;
+    on(event: 'close', listener: (removed: boolean, done: () => void) => void): this;
+
+    on(event: 'failed', listener: (error: Error) => void): this;
 }
 
 export default function (RED: NodeAPI) {
@@ -49,6 +63,7 @@ export default function (RED: NodeAPI) {
         const tryLogin = () => {
             client.login(this.token).catch((err) => {
                 this.emit('failed', err);
+                this.error('Failed to login to Discord: ' + err.message);
                 timeout = setTimeout(tryLogin, 5000);
             });
         };

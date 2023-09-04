@@ -80,9 +80,14 @@ export default function (RED: NodeAPI) {
             this.send(msg);
         };
         clientNode.onDiscord(config.event, listener);
+        const failed = () => {
+            this.status({ fill: 'red', shape: 'dot', text: 'login failed' });
+        };
+        clientNode.on('failed', failed);
         this.on('close', (_: boolean, done: () => void) => {
             clientNode.offDiscord('ready', ready);
             clientNode.offDiscord(config.event, listener);
+            clientNode.off('failed', failed);
             done();
         });
     }
