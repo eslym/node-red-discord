@@ -18,7 +18,6 @@
     export let value: string = '';
     export let state: EditorState | undefined = undefined;
     export let editor: EditorView | undefined = undefined;
-    export let wrap: boolean = false;
 
     let target: HTMLDivElement;
 
@@ -64,13 +63,13 @@
                 drawSelection(),
                 highlightSpecialChars(),
                 syntaxHighlighting(style),
+                EditorView.lineWrapping,
                 keymap.of([...defaultKeymap, ...historyKeymap]),
                 listener,
                 emojiPlugin
             ],
             parent: target
         });
-        state = editor.state;
     });
 
     onDestroy(() => {
@@ -79,7 +78,7 @@
     });
 </script>
 
-<div class="codemirror red-ui-typedInput-container" class:cm-wrap={wrap} bind:this={target} />
+<div class="codemirror red-ui-typedInput-container" bind:this={target} />
 
 <style lang="scss">
     .codemirror {
@@ -92,22 +91,10 @@
         &:focus-within {
             border-color: var(--red-ui-form-input-focus-color);
         }
-
-        &.cm-wrap {
-            :global(.cm-line) {
-                white-space: pre-wrap;
-                white-space: break-spaces;
-                word-break: break-word;
-                overflow-wrap: anywhere;
-                flex-shrink: 1;
-            }
-        }
-
         :global(.cm-scroller) {
             overflow: auto;
             padding: 6px;
         }
-
         :global(.cm-editor) {
             height: 100%;
             width: 100%;
@@ -128,18 +115,6 @@
         }
         :global(.cm-line) {
             position: relative;
-        }
-        :global(.cm-line:has(.cm-h1)) {
-            font-size: 1.6em;
-            font-weight: bold;
-        }
-        :global(.cm-line:has(.cm-h2)) {
-            font-size: 1.4em;
-            font-weight: bold;
-        }
-        :global(.cm-line:has(.cm-h3)) {
-            font-size: 1.2em;
-            font-weight: bold;
         }
         :global(.cm-h1) {
             color: var(--red-ui-header-text-color);
