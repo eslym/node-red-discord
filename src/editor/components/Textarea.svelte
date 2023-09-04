@@ -2,22 +2,13 @@
     import { openTray, tooltip } from '@eslym/rs4r/components';
     import Fa from 'svelte-fa/src/fa';
     import { faFaceSmile, faCalendarDays } from '@fortawesome/free-regular-svg-icons';
-    import {
-        faAt,
-        faUserGroup,
-        faHashtag,
-        faArrowRight,
-        faArrowTurnDown
-    } from '@fortawesome/free-solid-svg-icons';
+    import { faAt, faUserGroup, faHashtag } from '@fortawesome/free-solid-svg-icons';
     import { getAllContexts } from 'svelte';
     import SearchEmojiTray from '$editor/tray/SearchEmojiTray.svelte';
     import { formatEmoji } from '$shared/emoji';
     import CodeMirror from './CodeMirror.svelte';
     import type { EditorView } from 'codemirror';
-    import { local } from '$editor/lib/store';
-    import { name } from '$package.json';
 
-    const lineWrap = local(`${name}/lineWrap`);
     const context = getAllContexts();
 
     export let value: string;
@@ -80,21 +71,10 @@
                 <Fa icon={faHashtag} fw />
             </button>
         </div>
-        <div class="button-group rs4r-right">
-            <button
-                type="button"
-                class="red-ui-button"
-                use:tooltip={'Toggle Line Wrap'}
-                on:click={() => {
-                    $lineWrap = $lineWrap === 'true' ? 'false' : 'true';
-                }}
-            >
-                <Fa icon={$lineWrap === 'true' ? faArrowTurnDown : faArrowRight} fw />
-            </button>
-        </div>
+        <div class="button-group rs4r-right" />
     </div>
     <div class="textarea">
-        <CodeMirror bind:value bind:editor wrap={$lineWrap === 'true'} />
+        <CodeMirror bind:value bind:editor />
     </div>
 </div>
 

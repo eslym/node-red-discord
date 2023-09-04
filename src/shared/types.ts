@@ -27,4 +27,14 @@ export interface ComponentBuilderConfig {}
 
 export interface AttachmentBuilderConfig {}
 
-export interface EmbedFieldBuilderConfig {}
+export interface EmbedFieldBuilderConfig {
+    name: string;
+    value: string;
+    inline: TypedInputValue;
+}
+
+export interface ImageBuilderConfig {
+    url: string;
+    width: TypedInputValue;
+    height: TypedInputValue;
+}

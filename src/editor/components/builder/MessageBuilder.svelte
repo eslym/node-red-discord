@@ -31,11 +31,7 @@
             class="dc-message-builder-tab-page dc-message-builder-content-tab"
             class:active={activeTab === 'Content'}
         >
-            <Textarea
-                bind:value={typedInput.value}
-                expandTitle="Message Content"
-                placeholder="Message content"
-            />
+            <Textarea bind:value={typedInput.value} />
         </div>
         <div class="dc-message-builder-tab-page" class:active={activeTab === 'Embeds'}>
             <div class="rs4r-long-typed-input">
