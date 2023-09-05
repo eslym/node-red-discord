@@ -49,6 +49,38 @@
                 />
             </div>
         </div>
+        <div class="dc-message-builder-tab-page" class:active={activeTab === 'Components'}>
+            <div class="rs4r-long-typed-input">
+                <TypedInput
+                    inline
+                    bind:value={typedInput.config.components}
+                    types={{
+                        undefined: true,
+                        builder: {
+                            label: 'builder',
+                            hasValue: false
+                        },
+                        msg: true
+                    }}
+                />
+            </div>
+        </div>
+        <div class="dc-message-builder-tab-page" class:active={activeTab === 'Attachments'}>
+            <div class="rs4r-long-typed-input">
+                <TypedInput
+                    inline
+                    bind:value={typedInput.config.attachments}
+                    types={{
+                        undefined: true,
+                        builder: {
+                            label: 'builder',
+                            hasValue: false
+                        },
+                        msg: true
+                    }}
+                />
+            </div>
+        </div>
     </div>
 {/if}
 

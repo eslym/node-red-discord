@@ -10,17 +10,22 @@ export interface TypedInputValue {
 }
 
 export interface MessageBuilderConfig {
-    embeds: BuilderTypedInputValue<BuilderTypedInputValue<EmbedBuilderConfig>[]>;
-    components: BuilderTypedInputValue<
-        BuilderTypedInputValue<BuilderTypedInputValue<ComponentBuilderConfig>[]>[]
-    >;
+    embeds: BuilderTypedInputValue<EmbedBuilderConfig[]>;
+    components: BuilderTypedInputValue<BuilderTypedInputValue<ComponentBuilderConfig[]>[]>;
     attachments: BuilderTypedInputValue<BuilderTypedInputValue<AttachmentBuilderConfig>[]>;
 }
 
 export interface EmbedBuilderConfig {
     title: string;
     description: string;
+    url: string;
+    color: string;
     fields: BuilderTypedInputValue<EmbedFieldBuilderConfig>[];
+    image: BuilderTypedInputValue<ImageBuilderConfig>;
+    thumbnail: BuilderTypedInputValue<ImageBuilderConfig>;
+    timestamp: TypedInputValue;
+    author: BuilderTypedInputValue<AuthorBuilderConfig>;
+    footer: BuilderTypedInputValue<FooterBuilderConfig>;
 }
 
 export interface ComponentBuilderConfig {}
@@ -37,4 +42,15 @@ export interface ImageBuilderConfig {
     url: string;
     width: TypedInputValue;
     height: TypedInputValue;
+}
+
+export interface AuthorBuilderConfig {
+    name: string;
+    url: string;
+    icon_url: string;
+}
+
+export interface FooterBuilderConfig {
+    text: string;
+    icon_url: string;
 }
