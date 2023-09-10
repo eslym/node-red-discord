@@ -2,3 +2,4 @@ node_modules
 dist
 .debug
 .node-red-settings.js
+compose-dev.yaml
