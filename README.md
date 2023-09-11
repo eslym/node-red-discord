@@ -4,6 +4,10 @@ Integrate discord.js into Node-RED
 
 > _Migrating from [node-red-discord-alternative](https://github.com/eslym/node-red-discord-alternative)_
 
+## Development
+
+Use vscode + devcontainer to develop this project, run `bun install` after the container is ready.
+
 ## Todo
 
 -   [ ] Message builder

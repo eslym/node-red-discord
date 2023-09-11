@@ -1,0 +1,15 @@
+{
+    "customizations": {
+        "extensions": [
+            "1YiB.svelte-bundle",
+            "ardenivanov.svelte-intellisense",
+            "dbaeumer.vscode-eslint",
+            "donjayamanne.githistory",
+            "esbenp.prettier-vscode",
+            "fivethree.vscode-svelte-snippets",
+            "Gruntfuggly.todo-tree",
+            "mhutchie.git-graph",
+            "svelte.svelte-vscode"
+        ]
+    }
+}
