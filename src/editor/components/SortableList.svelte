@@ -63,6 +63,7 @@
 
             .rs4r-content {
                 flex-grow: 1;
+                width: 0;
             }
 
             &:not(:last-child) {

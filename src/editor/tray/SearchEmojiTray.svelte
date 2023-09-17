@@ -35,12 +35,19 @@
 
         .rs4r-tab-pages {
             flex-grow: 1;
+            height: 0;
+            width: 100%;
         }
 
         .rs4r-tab-page {
             display: none;
-            width: 100%;
+            box-sizing: border-box;
             height: 100%;
+            padding: 8px;
+            background-color: var(--red-ui-tab-background);
+            border-left: 1px solid var(--red-ui-primary-border-color);
+            border-right: 1px solid var(--red-ui-primary-border-color);
+            border-bottom: 1px solid var(--red-ui-primary-border-color);
         }
 
         .rs4r-tab-page.active {

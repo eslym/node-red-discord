@@ -141,7 +141,14 @@
         display: none;
         flex-grow: 1;
         flex-direction: column;
+        height: 0;
+        overflow: auto;
         gap: 12px;
+        padding: 8px;
+        background-color: var(--red-ui-tab-background);
+        border-left: 1px solid var(--red-ui-primary-border-color);
+        border-right: 1px solid var(--red-ui-primary-border-color);
+        border-bottom: 1px solid var(--red-ui-primary-border-color);
     }
 
     .dc-message-builder-tab-page.active {
