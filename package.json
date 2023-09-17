@@ -13,7 +13,7 @@
     },
     "scripts": {
         "build": "rollup -c",
-        "build:publish": "rollup -c && cd dist && yarn publish",
+        "build:publish": "rollup -c && cd dist && npm publish",
         "format": "prettier --write .",
         "debug": "rollup -c && node-red --settings ./node-red-settings.js",
         "prepare": "husky install"

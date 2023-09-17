@@ -13,6 +13,8 @@
 
     export let value: string;
 
+    export let resizable = false;
+
     let editor: EditorView;
 
     function insetEmoji() {
@@ -73,7 +75,7 @@
         </div>
         <div class="button-group rs4r-right" />
     </div>
-    <div class="textarea">
+    <div class="textarea" class:resizable>
         <CodeMirror bind:value bind:editor />
     </div>
 </div>
@@ -89,6 +91,10 @@
             width: 100%;
             resize: none;
             min-height: 100px;
+
+            &.resizable {
+                resize: vertical;
+            }
         }
     }
     .rs4r-control-buttons {

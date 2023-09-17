@@ -7,6 +7,10 @@
     import { TypedInput } from '@eslym/rs4r/components';
     import Tabs from '../Tabs.svelte';
     import Textarea from '../Textarea.svelte';
+    import EmbedBuilder, { defaultEmbed } from './EmbedBuilder.svelte';
+    import SortableList from '../SortableList.svelte';
+    import Fa from 'svelte-fa/src/fa';
+    import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
     export let typedInput: BuilderTypedInputValue<MessageBuilderConfig> & {
         [valueKey]?: MessageBuilderConfig;
@@ -22,6 +26,27 @@
         };
         typedInput.config = typedInput[valueKey];
     } else if (!typedInput.config) typedInput.config = typedInput[valueKey];
+
+    function embedsTypeChanged(ev: CustomEvent<{ new: string; old: string }>) {
+        if (ev.detail.new === 'builder') {
+            typedInput.config!.embeds.config = (typedInput.config!.embeds as any)[valueKey] ?? [
+                defaultEmbed()
+            ];
+        } else if (ev.detail.old === 'builder') {
+            (typedInput.config!.embeds as any)[valueKey] = typedInput.config!.embeds.config;
+            typedInput.config!.embeds.config = undefined;
+        }
+    }
+
+    function addEmbed() {
+        typedInput.config!.embeds.config!.push(defaultEmbed());
+        typedInput.config!.embeds.config = typedInput.config!.embeds.config;
+    }
+
+    function removeEmbed(index: number) {
+        typedInput.config!.embeds.config!.splice(index, 1);
+        typedInput.config!.embeds.config = typedInput.config!.embeds.config;
+    }
 </script>
 
 {#if typedInput.config}
@@ -46,8 +71,29 @@
                         },
                         msg: true
                     }}
+                    on:typechange={embedsTypeChanged}
                 />
             </div>
+            {#if typedInput.config.embeds.config}
+                <div>
+                    <div style="text-align: right; margin-bottom: 4px">
+                        <button class="red-ui-button red-ui-button-small" on:click={addEmbed}>
+                            <Fa icon={faPlus} fw />
+                            Add Embed
+                        </button>
+                    </div>
+                    <SortableList bind:list={typedInput.config.embeds.config} let:index>
+                        <div class="dc-list-item">
+                            <EmbedBuilder
+                                bind:data={typedInput.config.embeds.config[index]}
+                                deletable
+                                expandable
+                                on:delete={() => removeEmbed(index)}
+                            />
+                        </div>
+                    </SortableList>
+                </div>
+            {/if}
         </div>
         <div class="dc-message-builder-tab-page" class:active={activeTab === 'Components'}>
             <div class="rs4r-long-typed-input">
@@ -94,15 +140,22 @@
     .dc-message-builder-tab-page {
         display: none;
         flex-grow: 1;
+        flex-direction: column;
+        gap: 12px;
     }
 
     .dc-message-builder-tab-page.active {
-        display: block;
+        display: flex;
     }
 
     .dc-message-builder-content-tab > :global(div) {
         height: 100%;
     }
+
+    .dc-list-item {
+        padding: 0 8px;
+    }
+
     .rs4r-long-typed-input {
         & > :global(.rs4r-typedinput) {
             width: 100%;

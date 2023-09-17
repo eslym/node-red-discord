@@ -12,7 +12,6 @@
     import { tags } from '@lezer/highlight';
     import { onMount, onDestroy } from 'svelte';
     import type { EditorState } from '@codemirror/state';
-    import { emojiPlugin } from '$editor/lib/emojis';
     import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 
     export let value: string = '';
@@ -65,8 +64,7 @@
                 syntaxHighlighting(style),
                 EditorView.lineWrapping,
                 keymap.of([...defaultKeymap, ...historyKeymap]),
-                listener,
-                emojiPlugin
+                listener
             ],
             parent: target
         });
@@ -79,6 +77,18 @@
 </script>
 
 <div class="codemirror red-ui-typedInput-container" bind:this={target} />
+
+<svelte:head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
+</svelte:head>
 
 <style lang="scss">
     .codemirror {
@@ -109,6 +119,7 @@
             background-color: transparent;
             padding: 0;
             margin-bottom: 0;
+            font-family: 'Noto Sans', 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans JP', 'Noto Sans KR', 'Noto Color Emoji', sans-serif;
         }
         :global(.cm-inst) {
             opacity: 0.6;
@@ -136,7 +147,7 @@
             background-color: var(--red-ui-text-editor-selection-background) !important;
         }
         :global(.cm-code) {
-            font-family: var(--red-ui-monospace-font);
+            font-family: 'Noto Sans Mono', 'Noto Sans SC', 'Noto Sans TC', 'Noto Sans JP', 'Noto Sans KR', 'Noto Color Emoji', monospace;
             color: var(--red-ui-text-color-code);
         }
         :global(.cm-link) {

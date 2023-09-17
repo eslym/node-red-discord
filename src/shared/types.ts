@@ -19,8 +19,8 @@ export interface EmbedBuilderConfig {
     title: string;
     description: string;
     url: string;
-    color: string;
-    fields: BuilderTypedInputValue<EmbedFieldBuilderConfig>[];
+    color: TypedInputValue;
+    fields: BuilderTypedInputValue<EmbedFieldBuilderConfig[]>;
     image: BuilderTypedInputValue<ImageBuilderConfig>;
     thumbnail: BuilderTypedInputValue<ImageBuilderConfig>;
     timestamp: TypedInputValue;
