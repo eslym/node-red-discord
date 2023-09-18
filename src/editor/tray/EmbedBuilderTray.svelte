@@ -5,4 +5,12 @@
     export let embed: EmbedBuilderConfig;
 </script>
 
-<EmbedBuilder bind:data={embed} deletable={false} expandable={false} />
+<div>
+    <EmbedBuilder bind:data={embed} deletable={false} expandable={false} />
+</div>
+
+<style>
+    div {
+        padding-bottom: 12px;
+    }
+</style>
