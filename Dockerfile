@@ -8,6 +8,7 @@ RUN curl -fsSL https://bun.sh/install > /root/install-bun.sh \
     && /root/install-bun.sh \
     && rm /root/install-bun.sh \
     && corepack enable \
+    && corepack prepare pnpm@latest --activate \
     && npm install -g npm@latest
 
-CMD ["bash"]
+CMD ["/bin/sh" "-c" "while sleep 1000; do :; done"]

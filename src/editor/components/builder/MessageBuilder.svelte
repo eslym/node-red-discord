@@ -1,16 +1,45 @@
 <script context="module" lang="ts">
     const valueKey = Symbol('value');
+
+    function openEmbedBuilderTray(
+        embed: EmbedBuilderConfig,
+        update: (embed: EmbedBuilderConfig) => void
+    ) {
+        openTray(EmbedBuilderTray, {
+            title: 'Embed Builder',
+            props: {
+                embed: embed
+            },
+            binding: {
+                embed: update
+            },
+            buttons: [
+                {
+                    text: RED._('common.label.back'),
+                    click() {
+                        RED.tray.close();
+                    }
+                }
+            ],
+            width: '500px'
+        });
+    }
 </script>
 
 <script lang="ts">
-    import type { BuilderTypedInputValue, MessageBuilderConfig } from '$shared/types';
-    import { TypedInput } from '@eslym/rs4r/components';
+    import type {
+        BuilderTypedInputValue,
+        EmbedBuilderConfig,
+        MessageBuilderConfig
+    } from '$shared/types';
+    import { TypedInput, openTray } from '@eslym/rs4r/components';
     import Tabs from '../Tabs.svelte';
     import Textarea from '../Textarea.svelte';
     import EmbedBuilder, { defaultEmbed } from './EmbedBuilder.svelte';
     import SortableList from '../SortableList.svelte';
     import Fa from 'svelte-fa/src/fa';
     import { faPlus } from '@fortawesome/free-solid-svg-icons';
+    import EmbedBuilderTray from '$editor/tray/EmbedBuilderTray.svelte';
 
     export let typedInput: BuilderTypedInputValue<MessageBuilderConfig> & {
         [valueKey]?: MessageBuilderConfig;
@@ -88,6 +117,7 @@
                                 bind:data={typedInput.config.embeds.config[index]}
                                 deletable
                                 expandable
+                                expand={openEmbedBuilderTray}
                                 on:delete={() => removeEmbed(index)}
                             />
                         </div>

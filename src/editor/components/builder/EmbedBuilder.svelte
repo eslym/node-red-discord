@@ -45,7 +45,6 @@
     import { createEventDispatcher } from 'svelte';
     import Fa from 'svelte-fa/src/fa';
     import Textarea from '../Textarea.svelte';
-    import { slide } from 'svelte/transition';
 
     const dispatch = createEventDispatcher();
 
@@ -53,6 +52,10 @@
 
     export let deletable = false;
     export let expandable = true;
+
+    export let expand:
+        | ((embed: EmbedBuilderConfig, update: (embed: EmbedBuilderConfig) => void) => void)
+        | undefined = undefined;
 </script>
 
 <div class="dc-embed-builder">
@@ -62,7 +65,11 @@
             <input type="text" bind:value={data.title} />
         </label>
         {#if expandable}
-            <button class="red-ui-button" use:tooltip={'Open in editor'}>
+            <button
+                class="red-ui-button"
+                use:tooltip={'Open in editor'}
+                on:click={() => expand?.(data, (embed) => (data = embed))}
+            >
                 <Fa fw icon={faExternalLink} />
             </button>
         {/if}
@@ -77,7 +84,7 @@
         {/if}
     </div>
     {#if !expandable || data[keyExpanded]}
-        <div class="dc-expand-content" transition:slide>
+        <div class="dc-expand-content">
             <div class="dc-row">
                 <label class="dc-input">
                     <span>URL</span>
@@ -95,6 +102,26 @@
             <div class="dc-row">
                 <label for={undefined}>Author</label>
                 <TypedInput inline bind:value={data.author} types={['undefined', 'str']} />
+            </div>
+            <div class="dc-row">
+                <label for={undefined}>Image</label>
+                <TypedInput inline bind:value={data.image} types={['undefined', 'str']} />
+            </div>
+            <div class="dc-row">
+                <label for={undefined}>Thumbnail</label>
+                <TypedInput inline bind:value={data.thumbnail} types={['undefined', 'str']} />
+            </div>
+            <div class="dc-row">
+                <label for={undefined}>Timestamp</label>
+                <TypedInput
+                    inline
+                    bind:value={data.timestamp}
+                    types={['undefined', 'str', 'date']}
+                />
+            </div>
+            <div class="dc-row">
+                <label for={undefined}>Footer</label>
+                <TypedInput inline bind:value={data.footer} types={['undefined', 'str']} />
             </div>
         </div>
     {/if}
@@ -161,6 +188,7 @@
 
     .dc-more {
         width: 100%;
+        margin-top: -4px;
 
         & > span {
             display: block;
